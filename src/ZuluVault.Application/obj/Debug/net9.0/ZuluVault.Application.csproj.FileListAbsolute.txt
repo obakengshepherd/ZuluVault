@@ -1,0 +1,16 @@
+C:\Users\obake\Downloads\ZuluVault\src\ZuluVault.Application\bin\Debug\net9.0\ZuluVault.Application.deps.json
+C:\Users\obake\Downloads\ZuluVault\src\ZuluVault.Application\bin\Debug\net9.0\ZuluVault.Application.dll
+C:\Users\obake\Downloads\ZuluVault\src\ZuluVault.Application\bin\Debug\net9.0\ZuluVault.Application.pdb
+C:\Users\obake\Downloads\ZuluVault\src\ZuluVault.Application\bin\Debug\net9.0\ZuluVault.Domain.dll
+C:\Users\obake\Downloads\ZuluVault\src\ZuluVault.Application\bin\Debug\net9.0\ZuluVault.Domain.pdb
+C:\Users\obake\Downloads\ZuluVault\src\ZuluVault.Application\obj\Debug\net9.0\ZuluVault.Application.csproj.AssemblyReference.cache
+C:\Users\obake\Downloads\ZuluVault\src\ZuluVault.Application\obj\Debug\net9.0\ZuluVault.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\obake\Downloads\ZuluVault\src\ZuluVault.Application\obj\Debug\net9.0\ZuluVault.Application.AssemblyInfoInputs.cache
+C:\Users\obake\Downloads\ZuluVault\src\ZuluVault.Application\obj\Debug\net9.0\ZuluVault.Application.AssemblyInfo.cs
+C:\Users\obake\Downloads\ZuluVault\src\ZuluVault.Application\obj\Debug\net9.0\ZuluVault.Application.csproj.CoreCompileInputs.cache
+C:\Users\obake\Downloads\ZuluVault\src\ZuluVault.Application\obj\Debug\net9.0\ZuluVault.Application.sourcelink.json
+C:\Users\obake\Downloads\ZuluVault\src\ZuluVault.Application\obj\Debug\net9.0\ZuluVaul.D67A5839.Up2Date
+C:\Users\obake\Downloads\ZuluVault\src\ZuluVault.Application\obj\Debug\net9.0\ZuluVault.Application.dll
+C:\Users\obake\Downloads\ZuluVault\src\ZuluVault.Application\obj\Debug\net9.0\refint\ZuluVault.Application.dll
+C:\Users\obake\Downloads\ZuluVault\src\ZuluVault.Application\obj\Debug\net9.0\ZuluVault.Application.pdb
+C:\Users\obake\Downloads\ZuluVault\src\ZuluVault.Application\obj\Debug\net9.0\ref\ZuluVault.Application.dll

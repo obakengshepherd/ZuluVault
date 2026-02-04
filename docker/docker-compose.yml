@@ -1,0 +1,44 @@
+# Full docker-compose.yml file with comments for ZuluVault setup
+# This defines services for postgres, redis, and the API.
+
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: zuluvault-postgres
+    environment:
+      POSTGRES_DB: zuluvault_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: YOUR_PASSWORD # Change this to a secure password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: zuluvault-redis
+    ports:
+      - "6379:6379"
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: zuluvault-api
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=zuluvault_db;Username=postgres;Password=YOUR_PASSWORD
+      - Redis__Configuration=redis:6379,abortConnect=false
+      - Jwt__Secret=GENERATE_YOUR_OWN_32_CHAR_SECRET_KEY_HERE
+      - Jwt__Issuer=ZuluVault
+      - Jwt__Audience=ZuluVaultClients
+      - Jwt__ExpiryMinutes=60
+
+volumes:
+  postgres_data:
