@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ZuluVault.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+da3ba011f5f094fa5c91aefe9f5606c507d5afd3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c18a53a31119ac32be961f30c965ed7626632dbf")]
 [assembly: System.Reflection.AssemblyProductAttribute("ZuluVault.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ZuluVault.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

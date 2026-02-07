@@ -16,8 +16,8 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
         // Load configuration from the API project's appsettings.json
         // (since connection string lives there in typical Clean Arch)
         var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())                  // Current dir = Api
-            .AddJsonFile("../../appsettings.json", optional: false)       // Go up two levels to root, then to appsettings
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("../../appsettings.json", optional: false)
             .AddJsonFile("../../appsettings.Development.json", optional: true)
             .Build();
 
@@ -30,11 +30,10 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
             throw new InvalidOperationException("Connection string 'DefaultConnection' not found in appsettings.json");
         }
 
-        builder.UseNpgsql(connectionString);  // <-- PostgreSQL provider
-
-        // Optional: Enable detailed errors / logging during migrations
-        // builder.EnableSensitiveDataLogging();
-        // builder.EnableDetailedErrors();
+        builder.UseNpgsql(connectionString, npgsqlOptions =>
+        {
+            npgsqlOptions.CommandTimeout(60);
+        });
 
         return new ApplicationDbContext(builder.Options);
     }

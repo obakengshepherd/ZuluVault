@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZuluVault Testing Guide | Enterprise Digital Wallet</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Archivo:wght@300;400;600;800&display=swap');
+        
+        :root {
+            --primary: #00ff88;
+            --secondary: #0088ff;
+            --dark: #0a0e1a;
+            --darker: #050810;
+            --light: #e0e8ff;
+            --accent: #ff0066;
+            --warning: #ffaa00;
+            --success: #00ff88;
+            --code-bg: rgba(0, 255, 136, 0.05);
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-tech: linear-gradient(135deg, #00ff88 0%, #0088ff 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Archivo', sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Animated background grid */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 0;
+            animation: grid-move 20s linear infinite;
+        }
+        
+        @keyframes grid-move {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 4rem 0;
+            position: relative;
+        }
+        
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 20%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: pulse 8s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+        }
+        
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 50px;
+            color: var(--primary);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease-out 0.2s backwards;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: rgba(224, 232, 255, 0.7);
+            max-width: 600px;
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease-out 0.4s backwards;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 3rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.6s backwards;
+        }
+        
+        .stat {
+            text-align: left;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--gradient-tech);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(224, 232, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Space Mono', monospace;
+        }
+        
+        /* Section Styles */
+        section {
+            padding: 6rem 0;
+            position: relative;
+        }
+        
+        .section-header {
+            margin-bottom: 4rem;
+        }
+        
+        .section-number {
+            font-family: 'Space Mono', monospace;
+            color: var(--primary);
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        h2 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+        
+        .section-description {
+            font-size: 1.2rem;
+            color: rgba(224, 232, 255, 0.7);
+            max-width: 700px;
+        }
+        
+        /* Step Cards */
+        .steps {
+            display: grid;
+            gap: 2rem;
+        }
+        
+        .step {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2.5rem;
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .step::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-tech);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+        
+        .step:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .step:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(0, 255, 136, 0.3);
+            transform: translateY(-5px);
+        }
+        
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-tech);
+            border-radius: 12px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            font-family: 'Space Mono', monospace;
+            margin-bottom: 1.5rem;
+            color: var(--darker);
+        }
+        
+        .step h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--light);
+        }
+        
+        .step-description {
+            color: rgba(224, 232, 255, 0.7);
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+        
+        /* Code Blocks */
+        .code-block {
+            background: var(--code-bg);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            position: relative;
+        }
+        
+        .code-block::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 0.5rem;
+            right: 1rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: rgba(0, 255, 136, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        pre {
+            margin: 0;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--primary);
+        }
+        
+        code {
+            font-family: 'Space Mono', monospace;
+        }
+        
+        .inline-code {
+            background: rgba(0, 255, 136, 0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9em;
+            color: var(--primary);
+        }
+        
+        /* API Endpoint Cards */
+        .endpoints {
+            display: grid;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .endpoint {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .endpoint:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(0, 136, 255, 0.3);
+        }
+        
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .method {
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .method.post {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--primary);
+        }
+        
+        .method.get {
+            background: rgba(0, 136, 255, 0.2);
+            color: var(--secondary);
+        }
+        
+        .endpoint-path {
+            font-family: 'Space Mono', monospace;
+            color: var(--light);
+            font-size: 1rem;
+        }
+        
+        .endpoint-description {
+            color: rgba(224, 232, 255, 0.6);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Response Examples */
+        .response {
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        .response-label {
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            font-family: 'Space Mono', monospace;
+        }
+        
+        /* Alert Boxes */
+        .alert {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            border-left: 4px solid;
+        }
+        
+        .alert-warning {
+            background: rgba(255, 170, 0, 0.1);
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+        
+        .alert-success {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--success);
+            color: var(--success);
+        }
+        
+        .alert-info {
+            background: rgba(0, 136, 255, 0.1);
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+        
+        .alert-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+        
+        .checklist li {
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .checklist li:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(10px);
+        }
+        
+        .checklist li::before {
+            content: '✓';
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: var(--gradient-tech);
+            border-radius: 50%;
+            color: var(--darker);
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        /* Tables */
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 2rem 0;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1.2rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .comparison-table th {
+            background: rgba(0, 255, 136, 0.1);
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+            font-family: 'Space Mono', monospace;
+        }
+        
+        .comparison-table tr {
+            background: rgba(255, 255, 255, 0.02);
+            transition: background 0.3s ease;
+        }
+        
+        .comparison-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Quick Links Navigation */
+        .quick-nav {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            background: rgba(10, 14, 26, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem 1rem;
+        }
+        
+        .quick-nav-title {
+            font-size: 0.7rem;
+            color: rgba(224, 232, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            font-family: 'Space Mono', monospace;
+        }
+        
+        .quick-nav a {
+            display: block;
+            width: 12px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .quick-nav a:hover {
+            background: var(--primary);
+            transform: scale(1.5);
+        }
+        
+        .quick-nav a.active {
+            background: var(--primary);
+        }
+        
+        /* Footer */
+        footer {
+            padding: 4rem 0;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 6rem;
+        }
+        
+        .footer-text {
+            color: rgba(224, 232, 255, 0.5);
+            font-size: 0.9rem;
+        }
+        
+        .footer-highlight {
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero {
+                min-height: 80vh;
+            }
+            
+            h1 {
+                font-size: 3rem;
+            }
+            
+            .stats {
+                gap: 1.5rem;
+            }
+            
+            .quick-nav {
+                display: none;
+            }
+            
+            section {
+                padding: 3rem 0;
+            }
+        }
+        
+        /* Scroll Animation */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .fade-in:nth-child(1) { animation-delay: 0.1s; }
+        .fade-in:nth-child(2) { animation-delay: 0.2s; }
+        .fade-in:nth-child(3) { animation-delay: 0.3s; }
+        .fade-in:nth-child(4) { animation-delay: 0.4s; }
+        .fade-in:nth-child(5) { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero Section -->
+        <header class="hero">
+            <div class="hero-badge">Testing Protocol</div>
+            <h1>Test Your<br>Digital Wallet<br>Beast</h1>
+            <p class="hero-subtitle">Complete end-to-end testing guide for ZuluVault—from setup to production validation. Built for enterprise-grade financial systems.</p>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number">12+</div>
+                    <div class="stat-label">API Endpoints</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Test Scenarios</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Coverage</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Prerequisites -->
+        <section id="prerequisites">
+            <div class="section-header">
+                <span class="section-number">STEP 01</span>
+                <h2>Prerequisites Check</h2>
+                <p class="section-description">Ensure your development environment is properly configured before running tests.</p>
+            </div>
+
+            <ul class="checklist fade-in">
+                <li>.NET 8 SDK installed and verified (<code class="inline-code">dotnet --version</code>)</li>
+                <li>PostgreSQL 15+ running on port 5432</li>
+                <li>Redis 7+ running on port 6379</li>
+                <li>Docker Desktop running (if using containerized setup)</li>
+                <li>Git client installed for version control</li>
+                <li>Postman or similar API testing tool (optional)</li>
+                <li>VS Code or Visual Studio 2022 with C# extensions</li>
+            </ul>
+
+            <div class="alert alert-info fade-in">
+                <div class="alert-title">💡 Pro Tip</div>
+                <p>Use Docker Compose to spin up PostgreSQL and Redis instantly: <code class="inline-code">docker-compose -f docker/docker-compose.yml up -d postgres redis</code></p>
+            </div>
+        </section>
+
+        <!-- Setup -->
+        <section id="setup">
+            <div class="section-header">
+                <span class="section-number">STEP 02</span>
+                <h2>Initial Setup</h2>
+                <p class="section-description">Get your ZuluVault instance up and running in minutes.</p>
+            </div>
+
+            <div class="steps">
+                <div class="step fade-in">
+                    <div class="step-number">1</div>
+                    <h3>Clone & Navigate</h3>
+                    <p class="step-description">Set up your workspace and navigate to the project directory.</p>
+                    <div class="code-block" data-lang="powershell">
+<pre># Navigate to your development folder
+cd C:\Dev
+
+# If you haven't created the project yet, copy from outputs
+# Otherwise, navigate to existing project
+cd ZuluVault</pre>
+                    </div>
+                </div>
+
+                <div class="step fade-in">
+                    <div class="step-number">2</div>
+                    <h3>Start Database Services</h3>
+                    <p class="step-description">Launch PostgreSQL and Redis using Docker Compose.</p>
+                    <div class="code-block" data-lang="powershell">
+<pre># Start database containers
+docker-compose -f docker/docker-compose.yml up -d postgres redis
+
+# Verify containers are running
+docker ps
+
+# Expected output:
+# CONTAINER ID   IMAGE              STATUS
+# xxxxxxxxxx     postgres:15-alpine Up 10 seconds
+# xxxxxxxxxx     redis:7-alpine     Up 10 seconds</pre>
+                    </div>
+                    <div class="alert alert-warning">
+                        <div class="alert-title">⚠️ Alternative: Local Installation</div>
+                        <p>If not using Docker, ensure PostgreSQL and Redis are installed locally and running on default ports.</p>
+                    </div>
+                </div>
+
+                <div class="step fade-in">
+                    <div class="step-number">3</div>
+                    <h3>Restore Dependencies</h3>
+                    <p class="step-description">Install all NuGet packages across all projects.</p>
+                    <div class="code-block" data-lang="powershell">
+<pre># Restore packages for entire solution
+dotnet restore
+
+# You should see successful restore for:
+# - ZuluVault.Api
+# - ZuluVault.Application
+# - ZuluVault.Domain
+# - ZuluVault.Infrastructure
+# - ZuluVault.UnitTests</pre>
+                    </div>
+                </div>
+
+                <div class="step fade-in">
+                    <div class="step-number">4</div>
+                    <h3>Build Solution</h3>
+                    <p class="step-description">Compile the entire solution to verify no build errors.</p>
+                    <div class="code-block" data-lang="powershell">
+<pre># Build in Release mode
+dotnet build --configuration Release
+
+# Expected output:
+# Build succeeded.
+#     0 Warning(s)
+#     0 Error(s)</pre>
+                    </div>
+                </div>
+
+                <div class="step fade-in">
+                    <div class="step-number">5</div>
+                    <h3>Configure Connection Strings</h3>
+                    <p class="step-description">Update appsettings.json with your database credentials.</p>
+                    <div class="code-block" data-lang="json">
+<pre>{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Port=5432;Database=zuluvault_db;Username=postgres;Password=postgres123"
+  },
+  "Redis": {
+    "Configuration": "localhost:6379,abortConnect=false"
+  },
+  "Jwt": {
+    "Secret": "YourSuperSecretKeyThatIsAtLeast32CharactersLong",
+    "Issuer": "ZuluVault",
+    "Audience": "ZuluVaultClients",
+    "ExpiryMinutes": "60"
+  }
+}</pre>
+                    </div>
+                    <div class="alert alert-warning">
+                        <div class="alert-title">🔒 Security Note</div>
+                        <p>Change the JWT Secret to a unique value. Use at least 32 characters for production.</p>
+                    </div>
+                </div>
+
+                <div class="step fade-in">
+                    <div class="step-number">6</div>
+                    <h3>Run Database Migrations</h3>
+                    <p class="step-description">Create database schema and seed initial data.</p>
+                    <div class="code-block" data-lang="powershell">
+<pre># Navigate to API project
+cd src/ZuluVault.Api
+
+# Create migration (if not exists)
+dotnet ef migrations add InitialCreate --project ../ZuluVault.Infrastructure
+
+# Apply migration to database
+dotnet ef database update --project ../ZuluVault.Infrastructure
+
+# Expected output:
+# Applying migration '20240203XXXXXX_InitialCreate'.
+# Done.</pre>
+                    </div>
+                </div>
+
+                <div class="step fade-in">
+                    <div class="step-number">7</div>
+                    <h3>Start the Application</h3>
+                    <p class="step-description">Launch the API and verify it's running correctly.</p>
+                    <div class="code-block" data-lang="powershell">
+<pre># Run the API project
+dotnet run
+
+# Expected output:
+# info: Microsoft.Hosting.Lifetime[14]
+#       Now listening on: https://localhost:5001
+# info: Microsoft.Hosting.Lifetime[14]
+#       Now listening on: http://localhost:5000</pre>
+                    </div>
+                    <div class="alert alert-success">
+                        <div class="alert-title">✅ Success!</div>
+                        <p>Navigate to <code class="inline-code">https://localhost:5001/swagger</code> to access the API documentation.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Testing -->
+        <section id="api-testing">
+            <div class="section-header">
+                <span class="section-number">STEP 03</span>
+                <h2>API Testing Scenarios</h2>
+                <p class="section-description">Execute comprehensive tests covering all core wallet operations.</p>
+            </div>
+
+            <div class="alert alert-info fade-in">
+                <div class="alert-title">📍 Testing Tools</div>
+                <p>You can use Swagger UI (built-in), Postman, cURL, or any HTTP client. All examples below work in Swagger UI.</p>
+            </div>
+
+            <!-- Test Scenario 1 -->
+            <div class="step fade-in" style="margin-top: 3rem;">
+                <div class="step-number">A</div>
+                <h3>User Registration & Authentication</h3>
+                <p class="step-description">Create a new user account and obtain JWT token for authenticated requests.</p>
+                
+                <div class="endpoints">
+                    <div class="endpoint">
+                        <div class="endpoint-header">
+                            <span class="method post">POST</span>
+                            <span class="endpoint-path">/api/auth/register</span>
+                        </div>
+                        <p class="endpoint-description">Register a new user and automatically create their wallet.</p>
+                        
+                        <div class="code-block" data-lang="json">
+<pre>{
+  "email": "john.doe@example.com",
+  "password": "SecurePass123!",
+  "confirmPassword": "SecurePass123!",
+  "firstName": "John",
+  "lastName": "Doe",
+  "phoneNumber": "+27821234567"
+}</pre>
+                        </div>
+
+                        <div class="response">
+                            <div class="response-label">✓ Expected Response (200 OK)</div>
+                            <div class="code-block" data-lang="json">
+<pre>{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "ZjY2MTc4ZTMtMGY...",
+  "expiresAt": "2024-02-03T11:00:00Z",
+  "user": {
+    "id": "abc123...",
+    "email": "john.doe@example.com",
+    "firstName": "John",
+    "lastName": "Doe",
+    "fullName": "John Doe",
+    "phoneNumber": "+27821234567",
+    "roles": ["User"]
+  }
+}</pre>
+                            </div>
+                        </div>
+
+                        <ul class="checklist" style="margin-top: 1.5rem;">
+                            <li>Copy the <code class="inline-code">token</code> value for subsequent requests</li>
+                            <li>Verify user receives "User" role by default</li>
+                            <li>Confirm wallet is automatically created</li>
+                            <li>Check email validation (try invalid email format)</li>
+                            <li>Test password requirements (min 8 chars, uppercase, number, special)</li>
+                        </ul>
+                    </div>
+
+                    <div class="endpoint">
+                        <div class="endpoint-header">
+                            <span class="method post">POST</span>
+                            <span class="endpoint-path">/api/auth/login</span>
+                        </div>
+                        <p class="endpoint-description">Login with existing credentials.</p>
+                        
+                        <div class="code-block" data-lang="json">
+<pre>{
+  "email": "john.doe@example.com",
+  "password": "SecurePass123!"
+}</pre>
+                        </div>
+
+                        <ul class="checklist" style="margin-top: 1.5rem;">
+                            <li>Test successful login with correct credentials</li>
+                            <li>Verify failed login with wrong password (should return 401)</li>
+                            <li>Test account lockout after 5 failed attempts</li>
+                            <li>Confirm new JWT token is issued on each login</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning">
+                    <div class="alert-title">🔐 Authenticating Requests in Swagger</div>
+                    <p>1. Click the green "Authorize" button at the top of Swagger UI<br>
+                    2. Enter: <code class="inline-code">Bearer YOUR_TOKEN_HERE</code><br>
+                    3. Click "Authorize" then "Close"<br>
+                    4. All subsequent requests will include the JWT token</p>
+                </div>
+            </div>
+
+            <!-- Test Scenario 2 -->
+            <div class="step fade-in" style="margin-top: 3rem;">
+                <div class="step-number">B</div>
+                <h3>Wallet Operations</h3>
+                <p class="step-description">Verify wallet creation, balance checks, and transaction history.</p>
+                
+                <div class="endpoints">
+                    <div class="endpoint">
+                        <div class="endpoint-header">
+                            <span class="method get">GET</span>
+                            <span class="endpoint-path">/api/wallets/my-wallet</span>
+                        </div>
+                        <p class="endpoint-description">Retrieve authenticated user's wallet details.</p>
+                        
+                        <div class="response">
+                            <div class="response-label">✓ Expected Response (200 OK)</div>
+                            <div class="code-block" data-lang="json">
+<pre>{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "userId": "abc123...",
+  "walletNumber": "ZV-20240203-123456",
+  "balance": 0.00,
+  "currency": "ZAR",
+  "status": "Active",
+  "dailyTransferLimit": 50000.00,
+  "remainingDailyLimit": 50000.00,
+  "isLocked": false,
+  "createdAt": "2024-02-03T10:30:00Z"
+}</pre>
+                            </div>
+                        </div>
+
+                        <ul class="checklist" style="margin-top: 1.5rem;">
+                            <li>Verify wallet number format: <code class="inline-code">ZV-YYYYMMDD-XXXXXX</code></li>
+                            <li>Confirm initial balance is 0.00 ZAR</li>
+                            <li>Check default daily transfer limit (50,000 ZAR)</li>
+                            <li>Ensure wallet status is "Active"</li>
+                            <li>Test unauthorized access (no token = 401 error)</li>
+                        </ul>
+                    </div>
+
+                    <div class="endpoint">
+                        <div class="endpoint-header">
+                            <span class="method get">GET</span>
+                            <span class="endpoint-path">/api/wallets/{id}/balance</span>
+                        </div>
+                        <p class="endpoint-description">Get current wallet balance with timestamp.</p>
+                        
+                        <div class="response">
+                            <div class="response-label">✓ Expected Response (200 OK)</div>
+                            <div class="code-block" data-lang="json">
+<pre>{
+  "walletId": "550e8400-e29b-41d4-a716-446655440000",
+  "balance": 0.00,
+  "currency": "ZAR",
+  "asOf": "2024-02-03T10:35:00Z"
+}</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="endpoint">
+                        <div class="endpoint-header">
+                            <span class="method get">GET</span>
+                            <span class="endpoint-path">/api/wallets/{id}/transactions?pageNumber=1&pageSize=20</span>
+                        </div>
+                        <p class="endpoint-description">Retrieve paginated transaction history.</p>
+                        
+                        <ul class="checklist" style="margin-top: 1.5rem;">
+                            <li>Initially returns empty array (no transactions yet)</li>
+                            <li>Test pagination parameters</li>
+                            <li>Verify transactions appear after wallet operations</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test Scenario 3 -->
+            <div class="step fade-in" style="margin-top: 3rem;">
+                <div class="step-number">C</div>
+                <h3>Admin Operations (Wallet Funding)</h3>
+                <p class="step-description">Credit wallets using admin privileges—required for testing transfers.</p>
+                
+                <div class="alert alert-info">
+                    <div class="alert-title">🔑 Admin Access Required</div>
+                    <p>Before testing this endpoint, you need to assign the Admin role to your user in the database:</p>
+                    <div class="code-block" data-lang="sql">
+<pre>-- Connect to PostgreSQL
+psql -U postgres -d zuluvault_db
+
+-- Find your user ID
+SELECT "Id", "Email" FROM "AspNetUsers" WHERE "Email" = 'john.doe@example.com';
+
+-- Assign Admin role
+INSERT INTO "AspNetUserRoles" ("UserId", "RoleId")
+SELECT 'YOUR_USER_ID', "Id" FROM "AspNetRoles" WHERE "Name" = 'Admin';</pre>
+                    </div>
+                    <p style="margin-top: 1rem;">After assigning the role, log out and log back in to get a new JWT token with Admin claims.</p>
+                </div>
+                
+                <div class="endpoints">
+                    <div class="endpoint">
+                        <div class="endpoint-header">
+                            <span class="method post">POST</span>
+                            <span class="endpoint-path">/api/wallets/{id}/credit</span>
+                        </div>
+                        <p class="endpoint-description">Credit a wallet with funds (Admin only).</p>
+                        
+                        <div class="code-block" data-lang="json">
+<pre>{
+  "walletId": "550e8400-e29b-41d4-a716-446655440000",
+  "amount": 10000.00,
+  "description": "Initial wallet funding for testing",
+  "idempotencyKey": "credit-test-001"
+}</pre>
+                        </div>
+
+                        <div class="response">
+                            <div class="response-label">✓ Expected Response (200 OK)</div>
+                            <div class="code-block" data-lang="json">
+<pre>{
+  "id": "...",
+  "transactionReference": "TXN-20240203103000-ABC12345",
+  "type": "Credit",
+  "amount": 10000.00,
+  "balanceBefore": 0.00,
+  "balanceAfter": 10000.00,
+  "currency": "ZAR",
+  "description": "Initial wallet funding for testing",
+  "status": "Completed",
+  "processedAt": "2024-02-03T10:30:00Z",
+  "createdAt": "2024-02-03T10:30:00Z"
+}</pre>
+                            </div>
+                        </div>
+
+                        <ul class="checklist" style="margin-top: 1.5rem;">
+                            <li>Create second user and fund their wallet for transfer testing</li>
+                            <li>Test idempotency by using same key twice (should return existing transaction)</li>
+                            <li>Verify balance updates immediately</li>
+                            <li>Check transaction appears in wallet history</li>
+                            <li>Confirm non-admin users get 403 Forbidden</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test Scenario 4 -->
+            <div class="step fade-in" style="margin-top: 3rem;">
+                <div class="step-number">D</div>
+                <h3>Peer-to-Peer Transfers</h3>
+                <p class="step-description">Test the core wallet feature—secure money transfers between users.</p>
+                
+                <div class="alert alert-warning">
+                    <div class="alert-title">📋 Prerequisites for Transfer Testing</div>
+                    <p>Before testing transfers, ensure you have:<br>
+                    1. Two registered users (User A and User B)<br>
+                    2. Both users have funded wallets (use admin credit endpoint)<br>
+                    3. You know User B's wallet number</p>
+                </div>
+                
+                <div class="endpoints">
+                    <div class="endpoint">
+                        <div class="endpoint-header">
+                            <span class="method post">POST</span>
+                            <span class="endpoint-path">/api/transfers</span>
+                        </div>
+                        <p class="endpoint-description">Initiate a transfer from authenticated user to another wallet.</p>
+                        
+                        <div class="code-block" data-lang="json">
+<pre>{
+  "destinationWalletNumber": "ZV-20240203-654321",
+  "amount": 500.00,
+  "description": "Payment for services",
+  "idempotencyKey": "transfer-test-001"
+}</pre>
+                        </div>
+
+                        <div class="response">
+                            <div class="response-label">✓ Expected Response (200 OK)</div>
+                            <div class="code-block" data-lang="json">
+<pre>{
+  "transferId": "...",
+  "transferReference": "TRF-20240203103500-DEF67890",
+  "status": "Completed",
+  "amount": 500.00,
+  "initiatedAt": "2024-02-03T10:35:00Z"
+}</pre>
+                            </div>
+                        </div>
+
+                        <ul class="checklist" style="margin-top: 1.5rem;">
+                            <li><strong>Success Case:</strong> Transfer 500 ZAR between funded wallets</li>
+                            <li><strong>Insufficient Funds:</strong> Attempt transfer exceeding balance (should fail with 400)</li>
+                            <li><strong>Daily Limit:</strong> Transfer more than 50,000 ZAR (should fail)</li>
+                            <li><strong>Invalid Wallet:</strong> Use non-existent wallet number (should fail with 400)</li>
+                            <li><strong>Self-Transfer:</strong> Send to own wallet (should fail with validation error)</li>
+                            <li><strong>Idempotency:</strong> Use same idempotency key twice (returns existing transfer)</li>
+                            <li><strong>Verify Balances:</strong> Check both sender and receiver balances updated correctly</li>
+                            <li><strong>Transaction History:</strong> Confirm debit appears in sender's history, credit in receiver's</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test Scenario 5 -->
+            <div class="step fade-in" style="margin-top: 3rem;">
+                <div class="step-number">E</div>
+                <h3>Security & Error Handling</h3>
+                <p class="step-description">Validate security measures and proper error responses.</p>
+                
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Test Case</th>
+                            <th>Expected Behavior</th>
+                            <th>Status Code</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Access protected endpoint without token</td>
+                            <td>Unauthorized error message</td>
+                            <td>401</td>
+                        </tr>
+                        <tr>
+                            <td>Access admin endpoint as regular user</td>
+                            <td>Forbidden error message</td>
+                            <td>403</td>
+                        </tr>
+                        <tr>
+                            <td>Submit invalid email format</td>
+                            <td>Validation error with details</td>
+                            <td>400</td>
+                        </tr>
+                        <tr>
+                            <td>Weak password (e.g., "password")</td>
+                            <td>Password requirement errors</td>
+                            <td>400</td>
+                        </tr>
+                        <tr>
+                            <td>Transfer with negative amount</td>
+                            <td>Amount validation error</td>
+                            <td>400</td>
+                        </tr>
+                        <tr>
+                            <td>Expired JWT token</td>
+                            <td>Token expired error</td>
+                            <td>401</td>
+                        </tr>
+                        <tr>
+                            <td>SQL injection attempt in inputs</td>
+                            <td>Parameterized queries prevent injection</td>
+                            <td>N/A</td>
+                        </tr>
+                        <tr>
+                            <td>Transfer to locked wallet</td>
+                            <td>Wallet locked error message</td>
+                            <td>400</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <ul class="checklist" style="margin-top: 2rem;">
+                    <li>Test rate limiting (if implemented) with rapid requests</li>
+                    <li>Verify audit logs are created for all wallet operations</li>
+                    <li>Check failed login attempts are tracked</li>
+                    <li>Confirm sensitive data (passwords) never appears in responses</li>
+                    <li>Validate CORS headers for cross-origin requests</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Database Verification -->
+        <section id="database">
+            <div class="section-header">
+                <span class="section-number">STEP 04</span>
+                <h2>Database Verification</h2>
+                <p class="section-description">Inspect database directly to verify data integrity and audit trails.</p>
+            </div>
+
+            <div class="step fade-in">
+                <div class="step-number">1</div>
+                <h3>Connect to PostgreSQL</h3>
+                <p class="step-description">Access your database to run verification queries.</p>
+                <div class="code-block" data-lang="powershell">
+<pre># Connect via psql
+psql -U postgres -d zuluvault_db
+
+# Or use pgAdmin, DBeaver, or any PostgreSQL client</pre>
+                </div>
+            </div>
+
+            <div class="step fade-in">
+                <div class="step-number">2</div>
+                <h3>Verify Database Schema</h3>
+                <p class="step-description">Check that all tables were created correctly.</p>
+                <div class="code-block" data-lang="sql">
+<pre>-- List all tables
+\dt
+
+-- Expected tables:
+-- AspNetUsers
+-- AspNetRoles
+-- AspNetUserRoles
+-- Wallets
+-- Transactions
+-- TransferRequests
+-- AuditLogs</pre>
+                </div>
+            </div>
+
+            <div class="step fade-in">
+                <div class="step-number">3</div>
+                <h3>Inspect Wallet Data</h3>
+                <p class="step-description">Verify wallet creation and balance tracking.</p>
+                <div class="code-block" data-lang="sql">
+<pre>-- View all wallets
+SELECT "Id", "WalletNumber", "Balance", "Currency", "Status" 
+FROM "Wallets";
+
+-- Check specific wallet
+SELECT * FROM "Wallets" 
+WHERE "WalletNumber" = 'ZV-20240203-123456';
+
+-- Verify wallet-user relationship
+SELECT w."WalletNumber", u."Email", w."Balance"
+FROM "Wallets" w
+JOIN "AspNetUsers" u ON w."UserId" = u."Id";</pre>
+                </div>
+            </div>
+
+            <div class="step fade-in">
+                <div class="step-number">4</div>
+                <h3>Review Transaction History</h3>
+                <p class="step-description">Examine the immutable transaction ledger.</p>
+                <div class="code-block" data-lang="sql">
+<pre>-- View recent transactions
+SELECT "TransactionReference", "Type", "Amount", 
+       "BalanceBefore", "BalanceAfter", "Status", "CreatedAt"
+FROM "Transactions"
+ORDER BY "CreatedAt" DESC
+LIMIT 10;
+
+-- Check transaction integrity (balance should always match)
+SELECT "Id", "BalanceBefore", "Amount", "BalanceAfter",
+       ("BalanceBefore" + "Amount") as "CalculatedAfter"
+FROM "Transactions"
+WHERE "Type" = 'Credit';
+
+-- Find all transfers
+SELECT t."TransactionReference", t."Amount", t."Description",
+       w."WalletNumber"
+FROM "Transactions" t
+JOIN "Wallets" w ON t."WalletId" = w."Id"
+WHERE t."Type" = 'Transfer'
+ORDER BY t."CreatedAt" DESC;</pre>
+                </div>
+            </div>
+
+            <div class="step fade-in">
+                <div class="step-number">5</div>
+                <h3>Audit Log Inspection</h3>
+                <p class="step-description">Review comprehensive audit trail for compliance.</p>
+                <div class="code-block" data-lang="sql">
+<pre>-- View all audit logs
+SELECT "Action", "EntityName", "EntityId", 
+       "IpAddress", "Timestamp"
+FROM "AuditLogs"
+ORDER BY "Timestamp" DESC
+LIMIT 20;
+
+-- Check user-specific audit trail
+SELECT a."Action", a."EntityName", u."Email", a."Timestamp"
+FROM "AuditLogs" a
+JOIN "AspNetUsers" u ON a."UserId" = u."Id"
+WHERE u."Email" = 'john.doe@example.com'
+ORDER BY a."Timestamp" DESC;</pre>
+                </div>
+            </div>
+
+            <div class="alert alert-success fade-in">
+                <div class="alert-title">✅ Data Integrity Checks</div>
+                <p><strong>Verify these invariants:</strong><br>
+                • Every user has exactly one wallet<br>
+                • All transaction balances are mathematically correct<br>
+                • No negative wallet balances<br>
+                • Transfer transactions come in pairs (debit + credit)<br>
+                • Audit logs exist for all sensitive operations</p>
+            </div>
+        </section>
+
+        <!-- Unit Tests -->
+        <section id="unit-tests">
+            <div class="section-header">
+                <span class="section-number">STEP 05</span>
+                <h2>Run Unit Tests</h2>
+                <p class="section-description">Execute automated test suite to verify business logic.</p>
+            </div>
+
+            <div class="step fade-in">
+                <div class="step-number">1</div>
+                <h3>Run All Tests</h3>
+                <p class="step-description">Execute the complete test suite.</p>
+                <div class="code-block" data-lang="powershell">
+<pre># Run all tests
+dotnet test
+
+# Expected output:
+# Passed!  - Failed:     0, Passed:    15, Skipped:     0, Total:    15</pre>
+                </div>
+            </div>
+
+            <div class="step fade-in">
+                <div class="step-number">2</div>
+                <h3>Run with Coverage</h3>
+                <p class="step-description">Generate code coverage report.</p>
+                <div class="code-block" data-lang="powershell">
+<pre># Run with coverage
+dotnet test /p:CollectCoverage=true /p:CoverageReportsFormat=opencover
+
+# View coverage summary in terminal</pre>
+                </div>
+            </div>
+
+            <div class="step fade-in">
+                <div class="step-number">3</div>
+                <h3>Run Specific Test Class</h3>
+                <p class="step-description">Focus on specific test scenarios.</p>
+                <div class="code-block" data-lang="powershell">
+<pre># Run wallet tests only
+dotnet test --filter "FullyQualifiedName~WalletTests"
+
+# Run with verbose output
+dotnet test --verbosity detailed</pre>
+                </div>
+            </div>
+
+            <div class="alert alert-info fade-in">
+                <div class="alert-title">📊 Test Coverage Areas</div>
+                <p>The unit test suite covers:<br>
+                • Wallet entity business logic (credit, debit, transfer validation)<br>
+                • Daily limit enforcement and reset<br>
+                • Wallet locking/unlocking mechanisms<br>
+                • Insufficient funds handling<br>
+                • Domain exception scenarios<br>
+                • Idempotency key validation</p>
+            </div>
+        </section>
+
+        <!-- Performance Testing -->
+        <section id="performance">
+            <div class="section-header">
+                <span class="section-number">STEP 06</span>
+                <h2>Performance & Load Testing</h2>
+                <p class="section-description">Optional advanced testing for production readiness.</p>
+            </div>
+
+            <div class="step fade-in">
+                <h3>Redis Cache Verification</h3>
+                <p class="step-description">Ensure caching is working correctly.</p>
+                <div class="code-block" data-lang="bash">
+<pre># Connect to Redis CLI
+redis-cli
+
+# Check keys
+KEYS *
+
+# Monitor cache operations in real-time
+MONITOR
+
+# Check cache hit rate
+INFO stats</pre>
+                </div>
+            </div>
+
+            <div class="step fade-in">
+                <h3>Load Testing with k6 (Optional)</h3>
+                <p class="step-description">Simulate concurrent users and transactions.</p>
+                <div class="code-block" data-lang="javascript">
+<pre>// k6-load-test.js
+import http from 'k6/http';
+import { check } from 'k6';
+
+export let options = {
+  vus: 50, // 50 virtual users
+  duration: '30s',
+};
+
+export default function() {
+  let res = http.get('http://localhost:5000/api/wallets/my-wallet');
+  check(res, { 'status is 200': (r) => r.status === 200 });
+}</pre>
+                </div>
+                <div class="code-block" data-lang="bash">
+<pre># Run load test
+k6 run k6-load-test.js</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Production Checklist -->
+        <section id="checklist">
+            <div class="section-header">
+                <span class="section-number">FINAL</span>
+                <h2>Production Readiness Checklist</h2>
+                <p class="section-description">Ensure all critical items are verified before deployment.</p>
+            </div>
+
+            <div class="fade-in" style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1.5rem;">Security</h3>
+                <ul class="checklist">
+                    <li>JWT secret is unique and secure (32+ characters)</li>
+                    <li>Database credentials are not hardcoded</li>
+                    <li>HTTPS is enforced in production</li>
+                    <li>CORS is properly configured (not AllowAll)</li>
+                    <li>Rate limiting is enabled</li>
+                    <li>SQL injection protection verified</li>
+                    <li>User input validation is comprehensive</li>
+                </ul>
+            </div>
+
+            <div class="fade-in" style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1.5rem;">Functionality</h3>
+                <ul class="checklist">
+                    <li>User registration and login work correctly</li>
+                    <li>Wallets are automatically created for new users</li>
+                    <li>Balance updates are accurate and atomic</li>
+                    <li>Transfers complete successfully between users</li>
+                    <li>Daily limits are enforced properly</li>
+                    <li>Idempotency prevents duplicate transactions</li>
+                    <li>Error messages are clear and helpful</li>
+                    <li>Audit logs capture all critical operations</li>
+                </ul>
+            </div>
+
+            <div class="fade-in" style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1.5rem;">Performance</h3>
+                <ul class="checklist">
+                    <li>Database queries are optimized with indexes</li>
+                    <li>Redis caching is working</li>
+                    <li>API responses are under 200ms for cached data</li>
+                    <li>Concurrent transactions don't cause race conditions</li>
+                    <li>Connection pooling is configured</li>
+                </ul>
+            </div>
+
+            <div class="fade-in" style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1.5rem;">DevOps</h3>
+                <ul class="checklist">
+                    <li>Docker containers build successfully</li>
+                    <li>Database migrations run without errors</li>
+                    <li>Environment variables are properly configured</li>
+                    <li>Logging is working (Serilog outputs to file)</li>
+                    <li>Health checks are implemented</li>
+                    <li>CI/CD pipeline passes all tests</li>
+                </ul>
+            </div>
+
+            <div class="alert alert-success fade-in" style="margin-top: 3rem;">
+                <div class="alert-title">🎉 Testing Complete!</div>
+                <p>If all checks pass, your ZuluVault instance is production-ready. You've successfully validated an enterprise-grade fintech system!</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <p class="footer-text">
+                Built with <span class="footer-highlight">precision</span> and <span class="footer-highlight">passion</span> 
+                for <span class="footer-highlight">enterprise fintech</span>
+            </p>
+            <p class="footer-text" style="margin-top: 1rem; font-size: 0.8rem;">
+                ZuluVault Testing Guide | 2024
+            </p>
+        </footer>
+    </div>
+
+    <!-- Quick Navigation -->
+    <nav class="quick-nav">
+        <div class="quick-nav-title">Jump To</div>
+        <a href="#prerequisites" title="Prerequisites"></a>
+        <a href="#setup" title="Setup"></a>
+        <a href="#api-testing" title="API Testing"></a>
+        <a href="#database" title="Database"></a>
+        <a href="#unit-tests" title="Unit Tests"></a>
+        <a href="#checklist" title="Checklist"></a>
+    </nav>
+
+    <script>
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Active navigation indicator
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.quick-nav a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

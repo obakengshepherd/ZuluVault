@@ -1,0 +1,9 @@
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Api\obj\Release\net9.0\ZuluVault.Api.csproj.AssemblyReference.cache
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Api\obj\Release\net9.0\rpswa.dswa.cache.json
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Api\obj\Release\net9.0\ZuluVault.Api.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Api\obj\Release\net9.0\ZuluVault.Api.AssemblyInfoInputs.cache
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Api\obj\Release\net9.0\ZuluVault.Api.AssemblyInfo.cs
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Api\obj\Release\net9.0\ZuluVault.Api.csproj.CoreCompileInputs.cache
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Api\obj\Release\net9.0\ZuluVault.Api.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Api\obj\Release\net9.0\ZuluVault.Api.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Api\obj\Release\net9.0\ZuluVault.Api.sourcelink.json

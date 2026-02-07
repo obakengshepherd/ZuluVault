@@ -1,44 +1,78 @@
 # Full docker-compose.yml file with comments for ZuluVault setup
 # This defines services for postgres, redis, and the API.
 
-version: "3.8"
+version: "3.9"
 
 services:
   postgres:
-    image: postgres:15
+    image: postgres:15-alpine
     container_name: zuluvault-postgres
     environment:
       POSTGRES_DB: zuluvault_db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: YOUR_PASSWORD # Change this to a secure password
+      POSTGRES_PASSWORD: ZuluVault@123
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - zuluvault-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
-    image: redis:7
+    image: redis:7-alpine
     container_name: zuluvault-redis
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - zuluvault-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   api:
     build:
-      context: .
+      context: ../
       dockerfile: docker/Dockerfile
     container_name: zuluvault-api
     ports:
       - "8080:80"
+      - "8443:443"
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
-      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=zuluvault_db;Username=postgres;Password=YOUR_PASSWORD
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80;https://+:443
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=zuluvault_db;Username=postgres;Password=ZuluVault@123
       - Redis__Configuration=redis:6379,abortConnect=false
-      - Jwt__Secret=GENERATE_YOUR_OWN_32_CHAR_SECRET_KEY_HERE
+      - Jwt__Secret=ZuluVault@SecureKey123$YourKeyMustBeAtLeast32Characters
       - Jwt__Issuer=ZuluVault
       - Jwt__Audience=ZuluVaultClients
       - Jwt__ExpiryMinutes=60
+    networks:
+      - zuluvault-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 volumes:
   postgres_data:
+  redis_data:
+
+networks:
+  zuluvault-network:
+    driver: bridge

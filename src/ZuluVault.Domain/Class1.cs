@@ -1,6 +1,2 @@
-﻿namespace ZuluVault.Domain;
+﻿// This file is intended to be removed - Domain layer is fully implemented above
 
-public class Class1
-{
-
-}

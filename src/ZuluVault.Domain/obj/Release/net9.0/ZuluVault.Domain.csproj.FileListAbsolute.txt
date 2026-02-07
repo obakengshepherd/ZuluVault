@@ -1,0 +1,13 @@
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Domain\obj\Release\net9.0\ZuluVault.Domain.csproj.AssemblyReference.cache
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Domain\obj\Release\net9.0\ZuluVault.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Domain\obj\Release\net9.0\ZuluVault.Domain.AssemblyInfoInputs.cache
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Domain\obj\Release\net9.0\ZuluVault.Domain.AssemblyInfo.cs
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Domain\obj\Release\net9.0\ZuluVault.Domain.csproj.CoreCompileInputs.cache
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Domain\obj\Release\net9.0\ZuluVault.Domain.sourcelink.json
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Domain\bin\Release\net9.0\ZuluVault.Domain.deps.json
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Domain\bin\Release\net9.0\ZuluVault.Domain.dll
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Domain\bin\Release\net9.0\ZuluVault.Domain.pdb
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Domain\obj\Release\net9.0\ZuluVault.Domain.dll
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Domain\obj\Release\net9.0\refint\ZuluVault.Domain.dll
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Domain\obj\Release\net9.0\ZuluVault.Domain.pdb
+C:\Users\obake\Downloads\GrandTour\ZuluVault\src\ZuluVault.Domain\obj\Release\net9.0\ref\ZuluVault.Domain.dll
