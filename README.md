@@ -314,9 +314,9 @@ MIT License - This project is free to use, modify, and distribute.
 **Tsaagane Obakeng Shepherd**
 
 📧 Email: obakengtsaagane@gmail.com  
-💼 LinkedIn: [linkedin.com/in/yourprofile](www.linkedin.com/in/obakeng-tsaagane-307544244)  
-🌐 Portfolio: [yourportfolio.com](https://obakengshepherd.netlify.app/)  
-💻 GitHub: [@yourusername](https://github.com/obakengshepherd)
+💼 LinkedIn: [LinkedIn](www.linkedin.com/in/obakeng-tsaagane-307544244)  
+🌐 Portfolio: [Portfolio](https://obakengshepherd.netlify.app/)  
+💻 GitHub: [GitHub](https://github.com/obakengshepherd)
 
 ---
 
