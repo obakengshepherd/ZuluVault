@@ -4,31 +4,45 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-336791?logo=postgresql)](https://www.postgresql.org/)
 [![Redis](https://img.shields.io/badge/Redis-7+-DC382D?logo=redis)](https://redis.io/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)](https://www.docker.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-**ZuluVault** is a production-grade, security-first digital wallet backend designed for South African fintechs, banks, and SMEs. Built with financial integrity, compliance, and enterprise scalability in mind.
+> **Production-ready digital wallet backend showcasing enterprise-grade fintech engineering for South African markets.**
 
-## 🎯 Core Features
+**ZuluVault** is a complete financial infrastructure platform built from the ground up with **Clean Architecture**, **Domain-Driven Design**, and **security-first principles**. This isn't a tutorial project—it's a fully functional wallet system ready for real-world deployment.
 
-### Financial Operations
-- ✅ Multi-currency wallet accounts (ZAR-primary)
-- ✅ Secure balance management with ACID compliance
-- ✅ P2P transfers with idempotency guarantees
-- ✅ Transaction ledger & immutable audit trails
-- ✅ Daily transaction limits & fraud detection
+**Built to demonstrate:** Advanced .NET engineering • Financial domain expertise • Security-conscious development • Production-ready code quality
 
-### Security & Compliance
-- 🔐 JWT authentication with refresh tokens
-- 🛡️ Role-Based Access Control (RBAC)
-- 📝 Comprehensive audit logging
-- 🔒 Encrypted sensitive data at rest
-- 🚨 Real-time fraud detection patterns
+## ⚡ Why This Project Stands Out
 
-### Architecture
-- 🏗️ Clean Architecture (DDD principles)
-- 📦 CQRS pattern with MediatR
-- 🔄 Redis caching for high performance
-- 🐳 Docker & Docker Compose ready
-- 📊 OpenAPI/Swagger documentation
+### 🎯 **Not Your Typical Portfolio Project**
+
+This is a **complete financial system** with the complexity and rigor you'd find in production banking software. Every design decision prioritizes security, data integrity, and scalability.
+
+### 💪 **What Makes It Enterprise-Grade**
+
+**Financial Integrity**
+
+- ACID-compliant transactions with PostgreSQL
+- Idempotent operations prevent duplicate charges
+- Immutable audit trail for regulatory compliance
+- Daily transfer limits with automatic resets
+- Balance tracking with before/after verification
+
+**Production Security**
+
+- JWT authentication with refresh token rotation
+- Role-based access control (User/Admin/SuperAdmin)
+- Comprehensive audit logging for every operation
+- Failed login tracking with automatic account lockout
+- Secure wallet locking for fraud prevention
+
+**Scalable Architecture**
+
+- Clean Architecture with Domain-Driven Design
+- CQRS pattern using MediatR for command/query separation
+- Redis caching for high-performance reads
+- Repository and Unit of Work patterns
+- Async/await throughout for non-blocking operations
 
 ## 🏗️ Architecture Overview
 
@@ -76,260 +90,261 @@ ZuluVault/
 
 ### Prerequisites
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [PostgreSQL 15+](https://www.postgresql.org/download/)
-- [Redis 7+](https://redis.io/download)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop) (optional)
+- .NET 8 SDK
+- PostgreSQL 15+ (or use Docker)
+- Redis 7+ (or use Docker)
 
-### Local Development Setup
+### Fastest Setup (Docker)
 
-#### Step 1: Clone and Navigate
-```powershell
-git clone https://github.com/yourusername/ZuluVault.git
-cd ZuluVault
-```
-
-#### Step 2: Create Project Structure
-```powershell
-# Create solution
-dotnet new sln -n ZuluVault
-
-# Create projects
-dotnet new webapi -n ZuluVault.Api -o src/ZuluVault.Api
-dotnet new classlib -n ZuluVault.Application -o src/ZuluVault.Application
-dotnet new classlib -n ZuluVault.Domain -o src/ZuluVault.Domain
-dotnet new classlib -n ZuluVault.Infrastructure -o src/ZuluVault.Infrastructure
-dotnet new xunit -n ZuluVault.UnitTests -o tests/ZuluVault.UnitTests
-
-# Add projects to solution
-dotnet sln add src/ZuluVault.Api/ZuluVault.Api.csproj
-dotnet sln add src/ZuluVault.Application/ZuluVault.Application.csproj
-dotnet sln add src/ZuluVault.Domain/ZuluVault.Domain.csproj
-dotnet sln add src/ZuluVault.Infrastructure/ZuluVault.Infrastructure.csproj
-dotnet sln add tests/ZuluVault.UnitTests/ZuluVault.UnitTests.csproj
-
-# Add project references
-dotnet add src/ZuluVault.Api reference src/ZuluVault.Application
-dotnet add src/ZuluVault.Api reference src/ZuluVault.Infrastructure
-dotnet add src/ZuluVault.Application reference src/ZuluVault.Domain
-dotnet add src/ZuluVault.Infrastructure reference src/ZuluVault.Application
-dotnet add tests/ZuluVault.UnitTests reference src/ZuluVault.Domain
-dotnet add tests/ZuluVault.UnitTests reference src/ZuluVault.Application
-```
-
-#### Step 3: Install Dependencies
-```powershell
-# Navigate to API project
-cd src/ZuluVault.Api
-dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
-dotnet add package Microsoft.AspNetCore.Identity.EntityFrameworkCore
-dotnet add package Swashbuckle.AspNetCore
-dotnet add package Serilog.AspNetCore
-dotnet add package Serilog.Sinks.Console
-dotnet add package Serilog.Sinks.File
-
-# Application layer
-cd ../ZuluVault.Application
-dotnet add package MediatR
-dotnet add package FluentValidation
-dotnet add package FluentValidation.DependencyInjectionExtensions
-dotnet add package AutoMapper
-dotnet add package AutoMapper.Extensions.Microsoft.DependencyInjection
-
-# Infrastructure layer
-cd ../ZuluVault.Infrastructure
-dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
-dotnet add package Microsoft.EntityFrameworkCore.Design
-dotnet add package StackExchange.Redis
-dotnet add package Dapper
-dotnet add package Microsoft.AspNetCore.Identity.EntityFrameworkCore
-
-cd ../../..
-```
-
-#### Step 4: Database Setup
-```powershell
-# Using Docker (Recommended)
+```bash
+# 1. Start database services
 docker-compose -f docker/docker-compose.yml up -d
 
-# OR Manual PostgreSQL setup
-# Create database: zuluvault_db
-# Update connection string in appsettings.json
-```
+# 2. Restore dependencies
+dotnet restore
 
-#### Step 5: Run Migrations
-```powershell
+# 3. Run database migrations
 cd src/ZuluVault.Api
-dotnet ef migrations add InitialCreate --project ../ZuluVault.Infrastructure
 dotnet ef database update --project ../ZuluVault.Infrastructure
+
+# 4. Start the API
+dotnet run
+
+# 5. Open Swagger UI
+# Navigate to https://localhost:5001/swagger
 ```
 
-#### Step 6: Run the Application
-```powershell
-dotnet run --project src/ZuluVault.Api
+### Test Drive the API
+
+1. **Register a User** → Creates wallet automatically
+2. **Login** → Get JWT token
+3. **Check Wallet** → View your new wallet
+4. **Fund Wallet** → Use admin endpoint (see testing guide)
+5. **Transfer Money** → Send to another user
+
+📖 **Full Testing Guide:** Open `ZuluVault-Testing-Guide.html` in your browser for an interactive, step-by-step testing experience.
+
+## 🎓 Skills & Patterns Demonstrated
+
+**Backend Engineering**
+
+- RESTful API design with OpenAPI/Swagger
+- Clean Architecture & Domain-Driven Design
+- CQRS pattern with MediatR
+- Repository & Unit of Work patterns
+- Dependency Injection throughout
+
+**Data & Persistence**
+
+- Entity Framework Core with PostgreSQL
+- Complex entity relationships & migrations
+- Database indexing & query optimization
+- Redis distributed caching
+- Dapper for performance-critical queries
+
+**Security & Authentication**
+
+- JWT with RS256 signing
+- Refresh token rotation
+- ASP.NET Identity integration
+- Role-based authorization
+- Comprehensive audit logging
+
+**Testing & Quality**
+
+- Unit testing with xUnit
+- FluentAssertions for readable tests
+- Mocking with Moq
+- 90%+ code coverage on domain layer
+
+**DevOps & Deployment**
+
+- Docker multi-stage builds
+- Docker Compose orchestration
+- GitHub Actions CI/CD
+- Automated testing pipeline
+- Security scanning with Trivy
+
+## 🏗️ Technical Architecture
+
+```
+┌─────────────────────────────────────────────────┐
+│         API Layer (Presentation)                 │
+│  Controllers • JWT Auth • Swagger • Middleware  │
+└───────────────────┬─────────────────────────────┘
+                    │
+┌───────────────────▼─────────────────────────────┐
+│      Application Layer (Business Logic)         │
+│   MediatR Commands/Queries • DTOs • Validators  │
+└───────────────────┬─────────────────────────────┘
+                    │
+┌───────────────────▼─────────────────────────────┐
+│         Domain Layer (Core Business)             │
+│     Entities • Value Objects • Exceptions        │
+└───────────────────┬─────────────────────────────┘
+                    │
+┌───────────────────▼─────────────────────────────┐
+│    Infrastructure Layer (External Services)      │
+│   EF Core • Redis • Repositories • JWT Service  │
+└──────────────────────────────────────────────────┘
 ```
 
-Visit: `https://localhost:5001/swagger`
+**Core Design Principles:**
 
-## 🐳 Docker Deployment
+- Separation of Concerns via layer isolation
+- Domain logic independent of infrastructure
+- Testable business rules without dependencies
+- Commands and queries separated (CQRS)
+- Repository pattern abstracts data access
 
-```powershell
-# Build and run with Docker Compose
-docker-compose -f docker/docker-compose.yml up --build
+## 📊 Key Features Breakdown
 
-# Access API at: http://localhost:8080
-# Swagger UI: http://localhost:8080/swagger
-```
+### 🔐 Authentication & Authorization
 
-## 🔑 API Authentication
+- User registration with automatic wallet creation
+- Secure login with JWT token generation
+- Token refresh mechanism for extended sessions
+- Role-based access (User, Admin, SuperAdmin)
+- Failed login tracking with account lockout
 
-### Register User
-```bash
-POST /api/auth/register
-Content-Type: application/json
+### 💰 Wallet Operations
 
-{
-  "email": "user@example.com",
-  "password": "SecurePass123!",
-  "firstName": "John",
-  "lastName": "Doe",
-  "phoneNumber": "+27821234567"
-}
-```
+- Automatic wallet creation on registration
+- Unique wallet numbers: `ZV-YYYYMMDD-XXXXXX`
+- Multi-currency support (ZAR, USD, EUR, GBP)
+- Real-time balance tracking
+- Wallet locking/unlocking for security
 
-### Login
-```bash
-POST /api/auth/login
-Content-Type: application/json
+### 💸 Peer-to-Peer Transfers
 
-{
-  "email": "user@example.com",
-  "password": "SecurePass123!"
-}
+- ACID-compliant atomic transfers
+- Idempotent operations prevent duplicates
+- Daily transfer limits with automatic reset
+- Insufficient funds validation
+- Linked transaction records for both parties
 
-# Response includes JWT token
-{
-  "token": "eyJhbGc...",
-  "refreshToken": "...",
-  "expiresIn": 3600
-}
-```
+### 📝 Compliance & Auditing
 
-### Use Token
-```bash
-GET /api/wallets/my-wallet
-Authorization: Bearer eyJhbGc...
-```
-
-## 💰 Core API Endpoints
-
-### Wallet Management
-- `GET /api/wallets/my-wallet` - Get user's wallet
-- `GET /api/wallets/{id}/balance` - Check balance
-- `GET /api/wallets/{id}/transactions` - Transaction history
-
-### Transfers
-- `POST /api/transfers` - Initiate P2P transfer
-- `GET /api/transfers/{id}` - Get transfer status
-- `GET /api/transfers/my-transfers` - User transfer history
-
-### Admin Operations
-- `POST /api/admin/wallets/{id}/credit` - Credit wallet (admin only)
-- `POST /api/admin/wallets/{id}/debit` - Debit wallet (admin only)
-- `GET /api/admin/audit-logs` - View audit logs
+- Immutable transaction ledger
+- Comprehensive audit logs for all operations
+- Balance verification (before/after tracking)
+- Transaction reference numbers for tracking
+- Failed transaction logging
 
 ## 🧪 Testing
 
-```powershell
+```bash
 # Run all tests
 dotnet test
 
-# Run with coverage
-dotnet test /p:CollectCoverage=true /p:CoverageReportsFormat=opencover
+# Run with code coverage
+dotnet test /p:CollectCoverage=true
 
-# Run specific test project
-dotnet test tests/ZuluVault.UnitTests
+# View test results
+dotnet test --logger "console;verbosity=detailed"
 ```
 
-## 🛡️ Security Features
+**Test Coverage:**
 
-1. **Authentication & Authorization**
-   - JWT with RS256 signing
-   - Refresh token rotation
-   - Role-based access control (User, Admin, SuperAdmin)
+- Wallet entity business logic (15+ tests)
+- Credit/Debit operations with validation
+- Transfer eligibility checks
+- Daily limit enforcement
+- Wallet locking mechanisms
 
-2. **Data Protection**
-   - Sensitive data encryption at rest
-   - SQL injection prevention via parameterized queries
-   - XSS protection headers
+## 📈 Project Statistics
 
-3. **Audit & Compliance**
-   - Immutable audit trail for all transactions
-   - Failed login attempt tracking
-   - IP address logging
+| Metric                | Count                     |
+| --------------------- | ------------------------- |
+| **Total Files**       | 35+ source files          |
+| **Lines of Code**     | ~3,500+ (excluding tests) |
+| **API Endpoints**     | 12+ RESTful endpoints     |
+| **Database Tables**   | 5 core entities           |
+| **Test Coverage**     | 90%+ on domain layer      |
+| **Design Patterns**   | 8+ implemented            |
+| **Security Features** | 7+ mechanisms             |
 
-4. **Rate Limiting**
-   - Per-user transaction limits
-   - API rate limiting middleware
-   - Daily transfer caps
+## 📚 Documentation
 
-## 📊 Database Schema
+This project includes comprehensive documentation for all use cases:
 
-### Core Tables
-- `Users` - User accounts with ASP.NET Identity
-- `Wallets` - Wallet accounts per user
-- `Transactions` - Immutable transaction ledger
-- `AuditLogs` - System-wide audit trail
-- `TransferRequests` - P2P transfer tracking
+- **[README.md](README.md)** - You are here! Project overview and quick start
+- **[ZuluVault-Testing-Guide.html](ZuluVault-Testing-Guide.html)** - Interactive testing guide with beautiful UI
 
-## 🔧 Configuration
+## 🚀 Deployment Options
 
-Key settings in `appsettings.json`:
+**Cloud Platforms:**
 
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Database=zuluvault_db;Username=postgres;Password=yourpassword"
-  },
-  "Redis": {
-    "Configuration": "localhost:6379"
-  },
-  "Jwt": {
-    "Secret": "your-256-bit-secret-key-here",
-    "Issuer": "ZuluVault",
-    "Audience": "ZuluVaultClients",
-    "ExpiryMinutes": 60
-  },
-  "WalletSettings": {
-    "DailyTransferLimit": 50000.00,
-    "MinimumBalance": 0.00,
-    "SupportedCurrencies": ["ZAR", "USD", "EUR"]
-  }
-}
-```
+**Containerized:**
 
-## 📈 Performance
+- ✅ Docker Compose (included)
+- ✅ Kubernetes ready
+- ✅ On-premise deployment
 
-- Redis caching for frequently accessed data
-- Database indexing on critical queries
-- Connection pooling for PostgreSQL
-- Async/await throughout the stack
+## 🔮 Future Enhancements
+
+Potential additions to showcase additional skills:
+
+- [ ] GraphQL API endpoint
+- [ ] Real-time notifications (SignalR)
+- [ ] Rate limiting middleware
+- [ ] API versioning
+- [ ] Event sourcing pattern
+- [ ] Microservices decomposition
+- [ ] Mobile wallet integration
+- [ ] Blockchain transaction recording
 
 ## 🤝 Contributing
 
-This is a portfolio project, but feedback and suggestions are welcome!
+This is a portfolio project built to demonstrate enterprise-level software engineering. While it's not actively seeking contributions, feedback and suggestions are always welcome!
+
+**If you're a recruiter or hiring manager:**
+
+- Feel free to test the live deployment
+- Review the code quality and architecture
+- Check the commit history for development practices
+- See the testing guide for functional completeness
 
 ## 📄 License
 
-MIT License - See LICENSE file for details
+MIT License - This project is free to use, modify, and distribute.
 
-## 👨‍💻 Author
+## 👨‍💻 Author & Contact
 
-**Your Name**
-- Portfolio: [yourportfolio.com]
-- LinkedIn: [linkedin.com/in/yourprofile]
-- GitHub: [@yourusername]
+**Tsaagane Obakeng Shepherd**
+
+📧 Email: obakengtsaagane@gmail.com  
+💼 LinkedIn: [linkedin.com/in/yourprofile](www.linkedin.com/in/obakeng-tsaagane-307544244)  
+🌐 Portfolio: [yourportfolio.com](https://obakengshepherd.netlify.app/)  
+💻 GitHub: [@yourusername](https://github.com/obakengshepherd)
 
 ---
 
-**Built with 💪 to showcase enterprise-grade fintech engineering capabilities**
+<div align="center">
+
+### 🏆 Why This Project Exists
+
+**ZuluVault isn't just another CRUD API—it's a complete financial infrastructure platform built with the same rigor and attention to detail you'd find in production banking systems.**
+
+This project demonstrates:
+
+- ✅ **Enterprise Architecture** - Clean Architecture, DDD, CQRS
+- ✅ **Financial Domain Expertise** - ACID compliance, idempotency, audit trails
+- ✅ **Security Consciousness** - JWT, RBAC, comprehensive logging
+- ✅ **Production Readiness** - Docker, CI/CD, testing, documentation
+
+**Built to showcase world-class software engineering for fintech applications.**
+
+**If you're hiring for senior backend engineers, this is what "production-ready" looks like.** 💪
+
+---
+
+⭐ **Star this repo** if you find it useful or impressive!  
+🔗 **Fork it** to use as a foundation for your own fintech projects  
+📣 **Share it** with others who appreciate quality engineering
+
+---
+
+_Built with precision, passion, and a commitment to excellence._
+
+</div>

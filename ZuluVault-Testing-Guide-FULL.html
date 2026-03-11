@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ZuluVault Testing Guide | Enterprise Digital Wallet</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #060810;
+      --surface: #0c0f1a;
+      --surface2: #111520;
+      --border: #1a1f35;
+      --border2: #222840;
+      --green: #00e5a0;
+      --blue: #3d9eff;
+      --purple: #8b6bf5;
+      --orange: #f5a623;
+      --red: #ff4d6d;
+      --text: #dce6ff;
+      --muted: #5a6480;
+      --muted2: #8a94b0;
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'Syne', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* Grid bg */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,160,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,160,0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+      animation: gridDrift 25s linear infinite;
+    }
+    @keyframes gridDrift { to { background-position: 48px 48px; } }
+
+    .wrap { max-width: 900px; margin: 0 auto; padding: 0 28px; position: relative; z-index: 1; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 80px 0 60px;
+      position: relative;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; top: 15%; right: -20%;
+      width: 580px; height: 580px;
+      background: radial-gradient(circle, rgba(0,229,160,0.12) 0%, transparent 65%);
+      border-radius: 50%; filter: blur(60px);
+      animation: glow 10s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes glow { 0%,100%{opacity:.4;transform:scale(1)} 50%{opacity:.7;transform:scale(1.15)} }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 6px 18px;
+      border: 1px solid var(--green);
+      border-radius: 40px;
+      color: var(--green);
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      animation: rise .8s ease-out both;
+    }
+    @keyframes rise { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:none} }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--green) 0%, var(--blue) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: rise .8s .15s ease-out both;
+    }
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--muted2);
+      max-width: 520px;
+      margin-bottom: 48px;
+      animation: rise .8s .3s ease-out both;
+    }
+    .stats {
+      display: flex; gap: 48px; flex-wrap: wrap;
+      animation: rise .8s .45s ease-out both;
+    }
+    .stat-num {
+      font-size: 2.8rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; line-height: 1;
+    }
+    .stat-label {
+      font-family: var(--mono); font-size: 0.72rem;
+      color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;
+    }
+
+    /* ── SIDE NAV ── */
+    .side-nav {
+      position: fixed; right: 24px; top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      background: rgba(12,15,26,.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border2);
+      border-radius: 14px;
+      padding: 20px 14px;
+    }
+    .side-nav-title {
+      font-family: var(--mono); font-size: 0.62rem;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: 1.5px; margin-bottom: 14px; text-align: center;
+    }
+    .side-nav a {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 0; text-decoration: none;
+      font-family: var(--mono); font-size: 0.65rem;
+      color: var(--muted); transition: color .2s;
+    }
+    .side-nav a::before {
+      content: ''; width: 8px; height: 8px;
+      border-radius: 50%; border: 1.5px solid var(--muted);
+      flex-shrink: 0; transition: all .2s;
+    }
+    .side-nav a:hover, .side-nav a.active { color: var(--green); }
+    .side-nav a:hover::before, .side-nav a.active::before {
+      border-color: var(--green); background: var(--green);
+    }
+
+    /* ── SECTIONS ── */
+    section { padding: 80px 0; }
+
+    .sec-tag {
+      font-family: var(--mono); font-size: 0.72rem;
+      color: var(--green); letter-spacing: 2px;
+      text-transform: uppercase; margin-bottom: 10px; display: block;
+    }
+    section h2 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 800; letter-spacing: -1px;
+      margin-bottom: 14px; line-height: 1.1;
+    }
+    .sec-desc { font-size: 1.05rem; color: var(--muted2); max-width: 620px; margin-bottom: 48px; }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 24px;
+      transition: border-color .25s, transform .25s;
+      position: relative;
+    }
+    .card::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--green), var(--blue));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .4s ease;
+    }
+    .card:hover::before { transform: scaleX(1); }
+    .card:hover { border-color: var(--border2); transform: translateY(-3px); }
+
+    .card-head {
+      display: flex; align-items: center; gap: 16px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-letter {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      font-weight: 800; font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-family: var(--mono);
+    }
+    .ltr-green  { background: var(--green); color: #000; }
+    .ltr-blue   { background: var(--blue);  color: #000; }
+    .ltr-purple { background: var(--purple);color: #fff; }
+    .ltr-orange { background: var(--orange);color: #000; }
+    .ltr-red    { background: var(--red);   color: #fff; }
+    .ltr-dim    { background: var(--surface2); color: var(--muted2); border: 1px solid var(--border2); font-size:.85rem; }
+
+    .card-title { font-size: 1.15rem; font-weight: 700; }
+    .card-sub   { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+    .card-body  { padding: 24px; }
+
+    /* ── ALERTS ── */
+    .alert {
+      border-radius: 10px; padding: 14px 18px;
+      margin: 16px 0; font-size: 0.88rem;
+      border-left: 3px solid; line-height: 1.6;
+    }
+    .alert strong { display: block; margin-bottom: 4px; font-size: .9rem; }
+    .a-green  { background: #001c12; border-color: var(--green);  color: #7fffd4; }
+    .a-blue   { background: #050f1f; border-color: var(--blue);   color: #80c4ff; }
+    .a-orange { background: #1c1200; border-color: var(--orange); color: #f5c84a; }
+    .a-red    { background: #1a0008; border-color: var(--red);    color: #ff8099; }
+
+    /* ── CODE ── */
+    .code-label {
+      font-family: var(--mono); font-size: 0.66rem;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: 1px; margin: 16px 0 4px;
+    }
+    pre {
+      background: #070a14;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      line-height: 1.65;
+      margin: 4px 0 16px;
+    }
+    .kw  { color: var(--purple); }
+    .str { color: var(--green); }
+    .cm  { color: var(--muted); font-style: italic; }
+    .num { color: var(--orange); }
+    .key { color: var(--blue); }
+    code {
+      font-family: var(--mono); font-size: .85em;
+      background: rgba(0,229,160,.08);
+      padding: 2px 6px; border-radius: 4px; color: var(--green);
+    }
+
+    /* ── ENDPOINT PILL ── */
+    .ep {
+      display: flex; align-items: center; gap: 12px;
+      background: #070a14; border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 16px;
+      font-family: var(--mono); font-size: 0.84rem;
+      margin: 14px 0;
+    }
+    .mth {
+      padding: 3px 10px; border-radius: 5px;
+      font-weight: 600; font-size: 0.72rem; letter-spacing: .5px;
+    }
+    .mth-post { background:#092e14; color:#4cdb7a; border:1px solid #1a5c30; }
+    .mth-get  { background:#061830; color:#4da6ff; border:1px solid #0f3570; }
+    .ep-path  { color: var(--text); }
+    .ep-note  { color: var(--muted); font-size: .78rem; margin-left: auto; }
+
+    /* ── CHECKLIST ── */
+    .chk { list-style: none; margin: 14px 0; }
+    .chk li {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 9px 12px; border-radius: 7px;
+      font-size: 0.88rem; color: var(--muted2);
+      border-bottom: 1px solid var(--border);
+      transition: background .2s;
+    }
+    .chk li:last-child { border-bottom: none; }
+    .chk li:hover { background: var(--surface2); }
+    .chk li::before {
+      content: '○'; color: var(--muted);
+      flex-shrink: 0; margin-top: 1px; font-size: .9rem;
+    }
+    .chk li strong { color: var(--text); }
+
+    /* ── TABLE ── */
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 16px 0; }
+    th {
+      text-align: left; padding: 10px 14px;
+      background: #070a14; color: var(--muted);
+      font-family: var(--mono); font-size: .7rem;
+      text-transform: uppercase; letter-spacing: .5px;
+      border-bottom: 1px solid var(--border);
+    }
+    td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--surface2); }
+
+    .badge {
+      display: inline-block; padding: 2px 8px;
+      border-radius: 4px; font-family: var(--mono); font-size: .72rem;
+    }
+    .b400 { background:#1c0808; color:#ff7070; border:1px solid #4a1a1a; }
+    .b401 { background:#1a1000; color:var(--orange); border:1px solid #4a3000; }
+    .b403 { background:#150a1a; color:#c080ff; border:1px solid #3d1a4a; }
+
+    /* ── NUMBERED STEPS ── */
+    .nstep { display: flex; gap: 18px; margin-bottom: 24px; }
+    .ncircle {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 2px solid var(--purple); color: var(--purple);
+      font-weight: 700; font-size: .78rem;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px; font-family: var(--mono);
+    }
+    .ncontent { flex: 1; }
+    .ncontent strong { display: block; font-size: .95rem; margin-bottom: 6px; color: var(--text); }
+    .ncontent p { font-size: .88rem; color: var(--muted2); margin-bottom: 8px; }
+
+    hr.div { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+    h3 {
+      font-size: .9rem; font-weight: 700;
+      color: var(--green); text-transform: uppercase;
+      letter-spacing: 1px; margin: 24px 0 10px;
+    }
+    h3:first-child { margin-top: 0; }
+    p.prose { font-size: .9rem; color: var(--muted2); margin-bottom: 12px; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 48px 0; text-align: center;
+      border-top: 1px solid var(--border);
+      margin-top: 60px;
+    }
+    footer p { color: var(--muted); font-size: .88rem; }
+    footer span { color: var(--green); font-weight: 700; }
+
+    @media(max-width:768px){
+      .side-nav { display: none; }
+      .stats { gap: 28px; }
+      section { padding: 48px 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══════════ HERO ══════════ -->
+  <header class="hero" id="top">
+    <div class="hero-badge">Testing Protocol v1.0</div>
+    <h1>ZuluVault<br>Testing Guide</h1>
+    <p class="hero-sub">Complete end-to-end testing protocol for the ZuluVault enterprise digital wallet — from environment setup through production readiness validation.</p>
+    <div class="stats">
+      <div>
+        <div class="stat-num">12+</div>
+        <div class="stat-label">API Endpoints</div>
+      </div>
+      <div>
+        <div class="stat-num">6</div>
+        <div class="stat-label">Test Stages</div>
+      </div>
+      <div>
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Coverage Target</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════ STEP 01 — PREREQUISITES ══════════ -->
+  <section id="prereqs">
+    <span class="sec-tag">Step 01</span>
+    <h2>Prerequisites Check</h2>
+    <p class="sec-desc">Verify your environment is properly configured before running any tests.</p>
+
+    <div class="card">
+      <div class="card-body">
+        <h3>Required Tools</h3>
+        <ul class="chk">
+          <li>
+            <strong>.NET 9 SDK</strong>&nbsp;— verify with <code>dotnet --version</code>
+          </li>
+          <li><strong>Docker Desktop</strong>&nbsp;— must be running; hosts Postgres and Redis</li>
+          <li><strong>Git</strong>&nbsp;— for version control</li>
+          <li><strong>Swagger UI</strong>&nbsp;— built into the API at <code>http://localhost:PORT</code> (no install needed)</li>
+          <li><strong>Postman / curl</strong>&nbsp;— optional alternative to Swagger</li>
+          <li><strong>VS Code or Visual Studio 2022</strong>&nbsp;— with C# extension</li>
+          <li><strong>psql client</strong>&nbsp;— accessed via Docker (no local install needed)</li>
+        </ul>
+
+        <div class="alert a-blue">
+          <strong>💡 Postgres &amp; Redis</strong>
+          Both are run via Docker Compose — you do <em>not</em> need local installations of either.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ STEP 02 — SETUP ══════════ -->
+  <section id="setup">
+    <span class="sec-tag">Step 02</span>
+    <h2>Initial Setup</h2>
+    <p class="sec-desc">Get your ZuluVault instance built and running. Run all commands from the project root unless noted.</p>
+
+    <div class="card">
+      <div class="card-body">
+
+        <div class="nstep">
+          <div class="ncircle">1</div>
+          <div class="ncontent">
+            <strong>Start Database Services</strong>
+            <p>Launch Postgres and Redis in the background using Docker Compose.</p>
+            <div class="code-label">bash — run from project root</div>
+            <pre>docker-compose -f docker/docker-compose.yml up -d postgres redis
+
+<span class="cm"># Verify both containers are up</span>
+docker ps</pre>
+            <p>Expected: two containers — <code>zuluvault-postgres</code> and <code>zuluvault-redis</code> with status <code>Up</code>.</p>
+            <div class="alert a-orange">
+              <strong>⚠️ TLS Timeout?</strong>
+              If image pulls fail with a TLS timeout, retry the command. It's a transient network issue. If it persists, disconnect VPN or try <code>docker pull postgres:15-alpine</code> manually.
+            </div>
+          </div>
+        </div>
+
+        <div class="nstep">
+          <div class="ncircle">2</div>
+          <div class="ncontent">
+            <strong>Restore NuGet Packages</strong>
+            <div class="code-label">bash</div>
+            <pre>dotnet restore</pre>
+            <p>Expect 3 NU1608 warnings about AutoMapper versions — these are harmless and can be ignored.</p>
+          </div>
+        </div>
+
+        <div class="nstep">
+          <div class="ncircle">3</div>
+          <div class="ncontent">
+            <strong>Build Solution</strong>
+            <div class="code-label">bash</div>
+            <pre>dotnet build --configuration Release</pre>
+            <p>All projects should succeed. Warnings are acceptable; zero errors is the goal.</p>
+          </div>
+        </div>
+
+        <div class="nstep">
+          <div class="ncircle">4</div>
+          <div class="ncontent">
+            <strong>Verify appsettings.json</strong>
+            <p>Located at <code>src/ZuluVault.Api/appsettings.json</code>. Confirm these values match your Docker Compose config:</p>
+            <div class="code-label">json</div>
+            <pre>{
+  <span class="key">"ConnectionStrings"</span>: {
+    <span class="key">"DefaultConnection"</span>: <span class="str">"Host=localhost;Port=5432;Database=zuluvault_db;Username=postgres;Password=postgres123"</span>
+  },
+  <span class="key">"Redis"</span>: {
+    <span class="key">"Configuration"</span>: <span class="str">"localhost:6379,abortConnect=false"</span>
+  },
+  <span class="key">"Jwt"</span>: {
+    <span class="key">"Secret"</span>: <span class="str">"YourSuperSecretKeyThatIsAtLeast32CharactersLong123"</span>,
+    <span class="key">"Issuer"</span>: <span class="str">"ZuluVault"</span>,
+    <span class="key">"Audience"</span>: <span class="str">"ZuluVaultClients"</span>,
+    <span class="key">"ExpiryMinutes"</span>: <span class="str">"60"</span>
+  }
+}</pre>
+            <div class="alert a-orange">
+              <strong>🔒 Security Note</strong>
+              Change the JWT Secret to something unique before sharing or deploying. Minimum 32 characters.
+            </div>
+          </div>
+        </div>
+
+        <div class="nstep">
+          <div class="ncircle">5</div>
+          <div class="ncontent">
+            <strong>Run Database Migrations</strong>
+            <p>Navigate to the API project first — all EF commands must be run from there.</p>
+            <div class="code-label">bash</div>
+            <pre><span class="cm"># Navigate to the API project</span>
+cd src/ZuluVault.Api
+
+<span class="cm"># Create the migration (only if not already created)</span>
+dotnet ef migrations add InitialCreate --project ../ZuluVault.Infrastructure --startup-project .
+
+<span class="cm"># Apply migration to the database</span>
+dotnet ef database update --project ../ZuluVault.Infrastructure --startup-project .</pre>
+            <div class="alert a-blue">
+              <strong>💡 Migration Tips</strong>
+              If you get a <em>PendingModelChangesWarning</em>, run <code>dotnet ef migrations remove</code> then re-add. If you get a password error, run <code>docker-compose -f docker/docker-compose.yml down -v</code> then bring containers back up to reset the Postgres volume.
+            </div>
+          </div>
+        </div>
+
+        <div class="nstep">
+          <div class="ncircle">6</div>
+          <div class="ncontent">
+            <strong>Start the API</strong>
+            <p>From <code>src/ZuluVault.Api</code>:</p>
+            <div class="code-label">bash</div>
+            <pre>dotnet run</pre>
+            <p>Note the port shown in the output (e.g. <code>http://localhost:5046</code>). Open that URL in your browser — Swagger UI loads at the root.</p>
+            <div class="alert a-green">
+              <strong>✅ Success</strong>
+              Swagger UI displays all available endpoints. You're ready to test.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ STEP 03 — API TESTING ══════════ -->
+  <section id="api">
+    <span class="sec-tag">Step 03</span>
+    <h2>API Testing Scenarios</h2>
+    <p class="sec-desc">Execute comprehensive tests covering all core wallet operations. Use Swagger UI, Postman, or curl.</p>
+
+    <div class="alert a-blue" style="margin-bottom:28px;">
+      <strong>🔐 How to Authenticate in Swagger</strong>
+      1. Register or login to get a token.<br>
+      2. Click the <strong>Authorize</strong> button (top-right of Swagger UI).<br>
+      3. Enter <code>Bearer YOUR_TOKEN_HERE</code> and click Authorize.<br>
+      4. All subsequent requests will include the JWT automatically.
+    </div>
+
+    <!-- A — Auth -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-letter ltr-green">A</div>
+        <div>
+          <div class="card-title">User Registration &amp; Authentication</div>
+          <div class="card-sub">Create a user account and obtain a JWT for authenticated requests</div>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <h3>Register</h3>
+        <div class="ep">
+          <span class="mth mth-post">POST</span>
+          <span class="ep-path">/api/Auth/register</span>
+        </div>
+        <div class="code-label">request body</div>
+        <pre>{
+  <span class="key">"email"</span>: <span class="str">"john.doe@example.com"</span>,
+  <span class="key">"password"</span>: <span class="str">"SecurePass123!"</span>,
+  <span class="key">"confirmPassword"</span>: <span class="str">"SecurePass123!"</span>,
+  <span class="key">"firstName"</span>: <span class="str">"John"</span>,
+  <span class="key">"lastName"</span>: <span class="str">"Doe"</span>,
+  <span class="key">"mobilePhone"</span>: <span class="str">"+27821234567"</span>,  <span class="cm">// note: field is mobilePhone, not phoneNumber</span>
+  <span class="key">"userType"</span>: <span class="str">"Individual"</span>      <span class="cm">// required: "Individual" or "Business"</span>
+}</pre>
+        <div class="alert a-green">
+          <strong>✓ Expected — 200 OK</strong>
+          Returns <code>accessToken</code>, <code>refreshToken</code>, and user details. Copy the <code>accessToken</code> for Swagger authorization.
+        </div>
+
+        <h3>Login</h3>
+        <div class="ep">
+          <span class="mth mth-post">POST</span>
+          <span class="ep-path">/api/Auth/login</span>
+        </div>
+        <div class="code-label">request body</div>
+        <pre>{
+  <span class="key">"email"</span>: <span class="str">"john.doe@example.com"</span>,
+  <span class="key">"password"</span>: <span class="str">"SecurePass123!"</span>
+}</pre>
+
+        <h3>Checks</h3>
+        <ul class="chk">
+          <li>Copy the returned <code>accessToken</code> and authorize in Swagger before proceeding</li>
+          <li>User receives <strong>User</strong> role by default</li>
+          <li>A wallet is automatically created on registration</li>
+          <li>Try registering with an invalid email — expect <span class="badge b400">400</span></li>
+          <li>Try a weak password like <code>password</code> — expect <span class="badge b400">400</span> with requirement errors</li>
+          <li>Try logging in with the wrong password — expect <span class="badge b401">401</span></li>
+        </ul>
+
+      </div>
+    </div>
+
+    <!-- B — Wallet Ops -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-letter ltr-blue">B</div>
+        <div>
+          <div class="card-title">Wallet Operations</div>
+          <div class="card-sub">Verify wallet creation, balance checks, and transaction history</div>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <h3>Get My Wallet</h3>
+        <div class="ep">
+          <span class="mth mth-get">GET</span>
+          <span class="ep-path">/api/wallets/my-wallet</span>
+        </div>
+        <div class="alert a-green">
+          <strong>✓ Expected — 200 OK</strong>
+          Returns wallet details. Note the <code>id</code> (UUID) and <code>walletNumber</code> — you'll need both for later steps.
+        </div>
+        <div class="code-label">example response</div>
+        <pre>{
+  <span class="key">"id"</span>: <span class="str">"550e8400-e29b-41d4-a716-446655440000"</span>,
+  <span class="key">"walletNumber"</span>: <span class="str">"ZV20240203XXXXXXXX"</span>,
+  <span class="key">"balance"</span>: <span class="num">0.00</span>,
+  <span class="key">"currency"</span>: <span class="str">"ZAR"</span>,
+  <span class="key">"status"</span>: <span class="str">"Active"</span>,
+  <span class="key">"dailyTransferLimit"</span>: <span class="num">50000.00</span>,
+  <span class="key">"isLocked"</span>: <span class="kw">false</span>
+}</pre>
+
+        <h3>Get Balance</h3>
+        <div class="ep">
+          <span class="mth mth-get">GET</span>
+          <span class="ep-path">/api/wallets/{id}/balance</span>
+          <span class="ep-note">replace {id} with your wallet UUID</span>
+        </div>
+
+        <h3>Get Transaction History</h3>
+        <div class="ep">
+          <span class="mth mth-get">GET</span>
+          <span class="ep-path">/api/wallets/{id}/transactions?pageNumber=1&amp;pageSize=20</span>
+        </div>
+
+        <h3>Checks</h3>
+        <ul class="chk">
+          <li>Initial balance is <code>0.00 ZAR</code></li>
+          <li>Daily transfer limit defaults to <code>50,000 ZAR</code></li>
+          <li>Wallet status is <code>Active</code></li>
+          <li>Calling without a token returns <span class="badge b401">401</span></li>
+          <li>Transaction history is initially empty — it populates after credits and transfers</li>
+        </ul>
+
+      </div>
+    </div>
+
+    <!-- C — Admin -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-letter ltr-purple">C</div>
+        <div>
+          <div class="card-title">Admin Operations — Wallet Funding</div>
+          <div class="card-sub">Credit wallets using admin privileges — required before testing transfers</div>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <div class="alert a-orange">
+          <strong>🔑 Admin Role Required — do this before calling the credit endpoint</strong>
+        </div>
+
+        <h3>Step 1 — Assign Admin Role in the Database</h3>
+        <p class="prose">Connect to Postgres running inside Docker:</p>
+        <div class="code-label">bash</div>
+        <pre>docker exec -it zuluvault-postgres psql -U postgres -d zuluvault_db</pre>
+
+        <p class="prose">Inside the psql shell, find your user's UUID:</p>
+        <div class="code-label">sql</div>
+        <pre><span class="kw">SELECT</span> <span class="str">"Id"</span>, <span class="str">"Email"</span> <span class="kw">FROM</span> <span class="str">"AspNetUsers"</span>
+<span class="kw">WHERE</span> <span class="str">"Email"</span> = <span class="str">'john.doe@example.com'</span>;</pre>
+
+        <p class="prose">Copy the <code>Id</code> UUID from the result, then insert the role assignment:</p>
+        <div class="code-label">sql</div>
+        <pre><span class="kw">INSERT INTO</span> <span class="str">"AspNetUserRoles"</span> (<span class="str">"UserId"</span>, <span class="str">"RoleId"</span>)
+<span class="kw">SELECT</span> <span class="str">'PASTE-YOUR-UUID-HERE'</span>, <span class="str">"Id"</span>
+<span class="kw">FROM</span> <span class="str">"AspNetRoles"</span> <span class="kw">WHERE</span> <span class="str">"Name"</span> = <span class="str">'Admin'</span>;</pre>
+
+        <p class="prose">Exit psql:</p>
+        <pre>\q</pre>
+
+        <h3>Step 2 — Re-login to Get a Fresh Token</h3>
+        <p class="prose">Call <code>POST /api/Auth/login</code> again. The new JWT will include the Admin claim. Re-authorize in Swagger with this new token.</p>
+
+        <hr class="div"/>
+
+        <h3>Step 3 — Credit the Wallet</h3>
+        <div class="ep">
+          <span class="mth mth-post">POST</span>
+          <span class="ep-path">/api/wallets/{walletId}/credit</span>
+          <span class="ep-note">replace {walletId} with your wallet UUID from Step B</span>
+        </div>
+        <div class="code-label">request body</div>
+        <pre>{
+  <span class="key">"amount"</span>: <span class="num">10000.00</span>,
+  <span class="key">"description"</span>: <span class="str">"Initial wallet funding for testing"</span>,
+  <span class="key">"idempotencyKey"</span>: <span class="str">"credit-test-001"</span>
+}</pre>
+        <div class="alert a-green">
+          <strong>✓ Expected — 200 OK</strong>
+          Returns a transaction record with <code>balanceBefore: 0</code> and <code>balanceAfter: 10000</code>.
+        </div>
+
+        <h3>Checks</h3>
+        <ul class="chk">
+          <li><strong>Create a second user</strong> and fund their wallet too — you need two funded wallets for transfer tests</li>
+          <li><strong>Idempotency:</strong> submit the same <code>idempotencyKey</code> again — should return the same transaction, not create a new one</li>
+          <li>Balance updates immediately — verify via <code>GET /api/wallets/{id}/balance</code></li>
+          <li>Transaction appears in wallet history</li>
+          <li>Log in as a non-admin user and attempt to credit — expect <span class="badge b403">403</span></li>
+        </ul>
+
+      </div>
+    </div>
+
+    <!-- D — Transfers -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-letter ltr-orange">D</div>
+        <div>
+          <div class="card-title">Peer-to-Peer Transfers</div>
+          <div class="card-sub">Test the core wallet feature — secure money transfers between users</div>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <div class="alert a-blue">
+          <strong>📋 Prerequisites</strong>
+          Two registered users, both with funded wallets (Step C complete). Have User B's <code>walletNumber</code> ready — find it via <code>GET /api/wallets/my-wallet</code> while logged in as User B.
+        </div>
+
+        <h3>Initiate Transfer</h3>
+        <p class="prose">Authenticate as User A, then:</p>
+        <div class="ep">
+          <span class="mth mth-post">POST</span>
+          <span class="ep-path">/api/transfers</span>
+        </div>
+        <div class="code-label">request body</div>
+        <pre>{
+  <span class="key">"destinationWalletNumber"</span>: <span class="str">"ZV20240203XXXXXXXX"</span>,  <span class="cm">// User B's walletNumber</span>
+  <span class="key">"amount"</span>: <span class="num">500.00</span>,
+  <span class="key">"description"</span>: <span class="str">"Payment for services"</span>,
+  <span class="key">"idempotencyKey"</span>: <span class="str">"transfer-test-001"</span>
+}</pre>
+        <div class="alert a-green">
+          <strong>✓ Expected — 200 OK</strong>
+          Returns transfer reference and status <code>Completed</code>.
+        </div>
+
+        <h3>Test Scenarios</h3>
+        <table>
+          <thead><tr><th>Scenario</th><th>How to Test</th><th>Expected</th></tr></thead>
+          <tbody>
+            <tr><td>✅ Success</td><td>Transfer 500 ZAR between two funded wallets</td><td>200 OK</td></tr>
+            <tr><td>Insufficient funds</td><td>Transfer more than current balance</td><td><span class="badge b400">400</span></td></tr>
+            <tr><td>Daily limit exceeded</td><td>Transfer more than 50,000 ZAR total in a day</td><td><span class="badge b400">400</span></td></tr>
+            <tr><td>Invalid wallet</td><td>Use a wallet number that doesn't exist</td><td><span class="badge b400">400</span></td></tr>
+            <tr><td>Self-transfer</td><td>Send to your own wallet number</td><td><span class="badge b400">400</span> validation error</td></tr>
+            <tr><td>Idempotency</td><td>Resubmit with the same <code>idempotencyKey</code></td><td>200 OK, original transaction returned</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Post-Transfer Checks</h3>
+        <ul class="chk">
+          <li>User A's balance decreased by the transfer amount</li>
+          <li>User B's balance increased by the transfer amount</li>
+          <li>Debit transaction in User A's history, credit in User B's history</li>
+        </ul>
+
+      </div>
+    </div>
+
+    <!-- E — Security -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-letter ltr-red">E</div>
+        <div>
+          <div class="card-title">Security &amp; Error Handling</div>
+          <div class="card-sub">Validate security measures and proper error responses</div>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <table>
+          <thead><tr><th>Test Case</th><th>How to Test</th><th>Expected</th></tr></thead>
+          <tbody>
+            <tr><td>No token on protected endpoint</td><td>Call any wallet endpoint with no Authorization header</td><td><span class="badge b401">401</span></td></tr>
+            <tr><td>Regular user on admin endpoint</td><td>Call <code>/api/wallets/{id}/credit</code> with non-admin JWT</td><td><span class="badge b403">403</span></td></tr>
+            <tr><td>Invalid email format</td><td>Register with <code>"email": "notanemail"</code></td><td><span class="badge b400">400</span> + validation details</td></tr>
+            <tr><td>Weak password</td><td>Register with <code>"password": "password"</code></td><td><span class="badge b400">400</span> + requirement errors</td></tr>
+            <tr><td>Negative amount</td><td>Transfer with <code>"amount": -100</code></td><td><span class="badge b400">400</span></td></tr>
+            <tr><td>Expired JWT</td><td>Wait 60 min for token to expire, then make a request</td><td><span class="badge b401">401</span> token expired</td></tr>
+            <tr><td>Transfer to locked wallet</td><td>Lock a wallet in DB, then attempt transfer to it</td><td><span class="badge b400">400</span> wallet locked</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Additional Checks</h3>
+        <ul class="chk">
+          <li>Audit logs exist for all wallet operations — verify in DB (Step 04)</li>
+          <li>Failed login attempts are tracked on the wallet entity</li>
+          <li>Password hashes never appear in any API response</li>
+          <li>CORS header <code>access-control-allow-origin</code> present on all responses</li>
+          <li>Rapid duplicate requests don't create duplicate transactions</li>
+        </ul>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ STEP 04 — DATABASE ══════════ -->
+  <section id="database">
+    <span class="sec-tag">Step 04</span>
+    <h2>Database Verification</h2>
+    <p class="sec-desc">Inspect Postgres directly to confirm data integrity and audit trails. All commands run through Docker.</p>
+
+    <div class="card">
+      <div class="card-body">
+
+        <div class="nstep">
+          <div class="ncircle">1</div>
+          <div class="ncontent">
+            <strong>Connect to Postgres</strong>
+            <div class="code-label">bash</div>
+            <pre>docker exec -it zuluvault-postgres psql -U postgres -d zuluvault_db</pre>
+          </div>
+        </div>
+
+        <div class="nstep">
+          <div class="ncircle">2</div>
+          <div class="ncontent">
+            <strong>Verify Schema — List All Tables</strong>
+            <div class="code-label">psql</div>
+            <pre>\dt</pre>
+            <p>Expected: <code>AspNetUsers</code>, <code>AspNetRoles</code>, <code>AspNetUserRoles</code>, <code>Wallets</code>, <code>Transactions</code>, <code>AuditLogs</code></p>
+          </div>
+        </div>
+
+        <div class="nstep">
+          <div class="ncircle">3</div>
+          <div class="ncontent">
+            <strong>Inspect Wallet Data</strong>
+            <div class="code-label">sql</div>
+            <pre><span class="cm">-- All wallets with their owner emails</span>
+<span class="kw">SELECT</span> w.<span class="str">"WalletNumber"</span>, u.<span class="str">"Email"</span>, w.<span class="str">"Balance"</span>, w.<span class="str">"Status"</span>
+<span class="kw">FROM</span> <span class="str">"Wallets"</span> w
+<span class="kw">JOIN</span> <span class="str">"AspNetUsers"</span> u <span class="kw">ON</span> w.<span class="str">"UserId"</span> = u.<span class="str">"Id"</span>;</pre>
+          </div>
+        </div>
+
+        <div class="nstep">
+          <div class="ncircle">4</div>
+          <div class="ncontent">
+            <strong>Review Transaction History</strong>
+            <div class="code-label">sql</div>
+            <pre><span class="cm">-- 10 most recent transactions</span>
+<span class="kw">SELECT</span> <span class="str">"Reference"</span>, <span class="str">"Type"</span>, <span class="str">"Amount"</span>, <span class="str">"Status"</span>, <span class="str">"CreatedAt"</span>
+<span class="kw">FROM</span> <span class="str">"Transactions"</span>
+<span class="kw">ORDER BY</span> <span class="str">"CreatedAt"</span> <span class="kw">DESC LIMIT</span> <span class="num">10</span>;
+
+<span class="cm">-- Verify balance arithmetic on credits</span>
+<span class="kw">SELECT</span> <span class="str">"Id"</span>, <span class="str">"BalanceBefore"</span>, <span class="str">"Amount"</span>, <span class="str">"BalanceAfter"</span>,
+       (<span class="str">"BalanceBefore"</span> + <span class="str">"Amount"</span>) <span class="kw">AS</span> <span class="str">"CalculatedAfter"</span>
+<span class="kw">FROM</span> <span class="str">"Transactions"</span> <span class="kw">WHERE</span> <span class="str">"Type"</span> = <span class="str">'Credit'</span>;</pre>
+          </div>
+        </div>
+
+        <div class="nstep">
+          <div class="ncircle">5</div>
+          <div class="ncontent">
+            <strong>Audit Log Inspection</strong>
+            <div class="code-label">sql</div>
+            <pre><span class="cm">-- Recent audit entries</span>
+<span class="kw">SELECT</span> <span class="str">"Action"</span>, <span class="str">"EntityType"</span>, <span class="str">"PerformedBy"</span>, <span class="str">"Timestamp"</span>
+<span class="kw">FROM</span> <span class="str">"AuditLogs"</span>
+<span class="kw">ORDER BY</span> <span class="str">"Timestamp"</span> <span class="kw">DESC LIMIT</span> <span class="num">20</span>;
+
+<span class="cm">-- Audit trail for a specific user</span>
+<span class="kw">SELECT</span> a.<span class="str">"Action"</span>, a.<span class="str">"EntityType"</span>, u.<span class="str">"Email"</span>, a.<span class="str">"Timestamp"</span>
+<span class="kw">FROM</span> <span class="str">"AuditLogs"</span> a
+<span class="kw">JOIN</span> <span class="str">"AspNetUsers"</span> u <span class="kw">ON</span> a.<span class="str">"UserId"</span> = u.<span class="str">"Id"</span>
+<span class="kw">WHERE</span> u.<span class="str">"Email"</span> = <span class="str">'john.doe@example.com'</span>
+<span class="kw">ORDER BY</span> a.<span class="str">"Timestamp"</span> <span class="kw">DESC</span>;</pre>
+          </div>
+        </div>
+
+        <div class="alert a-green" style="margin-top:8px;">
+          <strong>✅ Data Integrity Invariants to Verify</strong>
+          Every user has exactly one wallet &nbsp;·&nbsp;
+          Balance arithmetic is correct on all transactions &nbsp;·&nbsp;
+          No negative wallet balances &nbsp;·&nbsp;
+          Transfers appear as paired debit + credit &nbsp;·&nbsp;
+          Audit logs exist for all sensitive operations
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ STEP 05 — UNIT TESTS ══════════ -->
+  <section id="tests">
+    <span class="sec-tag">Step 05</span>
+    <h2>Run Unit Tests</h2>
+    <p class="sec-desc">Execute the automated test suite to verify business logic. Run from the project root.</p>
+
+    <div class="card">
+      <div class="card-body">
+
+        <div class="nstep">
+          <div class="ncircle">1</div>
+          <div class="ncontent">
+            <strong>Run All Tests</strong>
+            <div class="code-label">bash</div>
+            <pre>dotnet test</pre>
+            <p>Expected: <code>Failed: 0, Passed: 15, Skipped: 0, Total: 15</code></p>
+          </div>
+        </div>
+
+        <div class="nstep">
+          <div class="ncircle">2</div>
+          <div class="ncontent">
+            <strong>Run with Code Coverage</strong>
+            <div class="code-label">bash</div>
+            <pre>dotnet test /p:CollectCoverage=true /p:CoverageReportsFormat=opencover</pre>
+          </div>
+        </div>
+
+        <div class="nstep">
+          <div class="ncircle">3</div>
+          <div class="ncontent">
+            <strong>Run Specific Tests</strong>
+            <div class="code-label">bash</div>
+            <pre><span class="cm"># Wallet tests only</span>
+dotnet test --filter "FullyQualifiedName~WalletTests"
+
+<span class="cm"># Verbose output</span>
+dotnet test --verbosity detailed</pre>
+          </div>
+        </div>
+
+        <div class="alert a-blue">
+          <strong>📊 Coverage Areas</strong>
+          Wallet credit/debit/transfer validation &nbsp;·&nbsp; Daily limit enforcement and reset &nbsp;·&nbsp;
+          Wallet locking/unlocking &nbsp;·&nbsp; Insufficient funds &nbsp;·&nbsp;
+          Domain exceptions &nbsp;·&nbsp; Idempotency key validation
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ STEP 06 — PERFORMANCE ══════════ -->
+  <section id="perf">
+    <span class="sec-tag">Step 06</span>
+    <h2>Performance &amp; Load Testing</h2>
+    <p class="sec-desc">Optional — advanced validation for production readiness.</p>
+
+    <div class="card">
+      <div class="card-body">
+
+        <h3>Redis Cache Verification</h3>
+        <div class="nstep">
+          <div class="ncircle">1</div>
+          <div class="ncontent">
+            <strong>Connect to Redis inside Docker</strong>
+            <div class="code-label">bash</div>
+            <pre>docker exec -it zuluvault-redis redis-cli</pre>
+          </div>
+        </div>
+        <div class="nstep">
+          <div class="ncircle">2</div>
+          <div class="ncontent">
+            <strong>Useful Redis commands</strong>
+            <div class="code-label">redis-cli</div>
+            <pre><span class="cm"># List all cached keys</span>
+KEYS *
+
+<span class="cm"># Watch all operations live</span>
+MONITOR
+
+<span class="cm"># View hit/miss statistics</span>
+INFO stats</pre>
+          </div>
+        </div>
+
+        <hr class="div"/>
+
+        <h3>Load Testing with k6 (Optional)</h3>
+        <div class="alert a-orange">
+          <strong>⚠️ Install k6 first</strong>
+          Download from <code>https://k6.io/docs/get-started/installation/</code>
+        </div>
+
+        <div class="nstep">
+          <div class="ncircle">1</div>
+          <div class="ncontent">
+            <strong>Create test script — save as <code>k6-load-test.js</code></strong>
+            <div class="code-label">javascript</div>
+            <pre><span class="kw">import</span> http <span class="kw">from</span> <span class="str">'k6/http'</span>;
+<span class="kw">import</span> { check } <span class="kw">from</span> <span class="str">'k6'</span>;
+
+<span class="kw">export let</span> options = {
+  vus: <span class="num">50</span>,
+  duration: <span class="str">'30s'</span>,
+};
+
+<span class="kw">export default function</span>() {
+  <span class="kw">const</span> res = http.get(<span class="str">'http://localhost:5046/api/wallets/my-wallet'</span>);
+  check(res, { <span class="str">'status is 200'</span>: (r) => r.status === <span class="num">200</span> });
+}</pre>
+          </div>
+        </div>
+        <div class="nstep">
+          <div class="ncircle">2</div>
+          <div class="ncontent">
+            <strong>Run the load test</strong>
+            <div class="code-label">bash</div>
+            <pre>k6 run k6-load-test.js</pre>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ FINAL — PRODUCTION CHECKLIST ══════════ -->
+  <section id="checklist">
+    <span class="sec-tag">Final</span>
+    <h2>Production Readiness Checklist</h2>
+    <p class="sec-desc">Confirm all critical items before deployment.</p>
+
+    <div class="card">
+      <div class="card-body">
+
+        <h3>Security</h3>
+        <ul class="chk">
+          <li>JWT secret is unique and at least 32 characters</li>
+          <li>Database credentials are not hardcoded — use environment variables in production</li>
+          <li>HTTPS enforced in production environment</li>
+          <li>CORS is locked down (not AllowAll) in production</li>
+          <li>All user inputs are validated via FluentValidation</li>
+          <li>Passwords never appear in any API response or log</li>
+        </ul>
+
+        <h3>Functionality</h3>
+        <ul class="chk">
+          <li>Registration and login work correctly end-to-end</li>
+          <li>Wallet is automatically created for every new user</li>
+          <li>Balance updates are accurate and atomic</li>
+          <li>Transfers complete successfully between two users</li>
+          <li>Daily transfer limits are enforced</li>
+          <li>Idempotency prevents duplicate transactions</li>
+          <li>Audit logs captured for all sensitive operations</li>
+          <li>Error messages are clear and helpful</li>
+        </ul>
+
+        <h3>Performance</h3>
+        <ul class="chk">
+          <li>Database indexes are in place (verified during migration)</li>
+          <li>Redis caching is active and responding</li>
+          <li>No race conditions under concurrent load</li>
+          <li>Connection pooling is configured</li>
+        </ul>
+
+        <h3>DevOps</h3>
+        <ul class="chk">
+          <li>Docker Compose brings up all services cleanly</li>
+          <li>Database migrations run without errors</li>
+          <li>Environment variables configured for each target environment</li>
+          <li>Serilog writing to both console and file</li>
+          <li><code>GET /health</code> returns <code>200 OK</code></li>
+        </ul>
+
+        <div class="alert a-green" style="margin-top:16px;">
+          <strong>🎉 Testing Complete</strong>
+          All checks passing means your ZuluVault instance is production-ready. You've validated an enterprise-grade fintech system end-to-end.
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>ZuluVault Testing Guide &nbsp;·&nbsp; <span>Enterprise Digital Wallet</span> &nbsp;·&nbsp; 2026</p>
+  </footer>
+
+</div>
+
+<!-- Side nav -->
+<nav class="side-nav">
+  <div class="side-nav-title">Jump To</div>
+  <a href="#prereqs">Prereqs</a>
+  <a href="#setup">Setup</a>
+  <a href="#api">API Tests</a>
+  <a href="#database">Database</a>
+  <a href="#tests">Unit Tests</a>
+  <a href="#perf">Performance</a>
+  <a href="#checklist">Checklist</a>
+</nav>
+
+<script>
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const t = document.querySelector(a.getAttribute('href'));
+      if(t) t.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+
+  // Active nav highlight
+  const sections = document.querySelectorAll('section[id], header[id]');
+  const links = document.querySelectorAll('.side-nav a');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.side-nav a[href="#${entry.target.id}"]`);
+        if(active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+  sections.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>
